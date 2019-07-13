@@ -3,18 +3,24 @@ import { query } from "./messaging";
 import { LibraryViewer } from "./library-viewer";
 import { AppList, IsAppList } from "../util/types";
 import { Spinner } from "./widgets/icons";
+import { IsArray, IsNumber } from "../util/type";
 
 export class Main extends Component<
   { children?: null | never },
-  { library: AppList }
+  { library: AppList; installed: number[] }
 > {
   public async componentDidMount() {
-    const result = await query("load-data");
-    if (!IsAppList(result)) {
+    const library = await query("load-data");
+    if (!IsAppList(library)) {
       throw new Error("Invalid load data");
     }
 
-    this.setState({ library: result });
+    const installed = await query("installed-apps");
+    if (!IsArray(IsNumber)(installed)) {
+      throw new Error("Invalid installed apps data");
+    }
+
+    this.setState({ library, installed });
   }
 
   public render() {
@@ -34,7 +40,10 @@ export class Main extends Component<
 
     return (
       <div style={{ width: "100vw", height: "100vh" }}>
-        <LibraryViewer library={this.state.library} />
+        <LibraryViewer
+          library={this.state.library}
+          installed={this.state.installed}
+        />
       </div>
     );
   }

@@ -19,8 +19,7 @@ const locations = {
   steam: path.join("C:", "Program Files (x86)", "Steam")
 };
 
-export function file(location: keyof typeof locations, ...parts: string[]) {
-  const loc = path.join(locations[location], ...parts);
+export function file_raw(loc: string) {
   return {
     write(data: any) {
       return new Promise((res, rej) => {
@@ -105,17 +104,18 @@ export function file(location: keyof typeof locations, ...parts: string[]) {
       });
     },
     path: loc,
-    name: parts[parts.length - 1],
+    name: path.basename(loc),
     /** Can be used for type checking when getting children of a directory */
     isFileType: true
   };
 }
 
-export function directory(
-  location: keyof typeof locations,
-  ...parts: string[]
-) {
+export function file(location: keyof typeof locations, ...parts: string[]) {
   const loc = path.join(locations[location], ...parts);
+  return file_raw(loc);
+}
+
+export function directory_raw(loc: string) {
   return {
     exists() {
       return new Promise<boolean>((res, rej) => {
@@ -138,9 +138,9 @@ export function directory(
       for (const f of files) {
         const l = path.join(loc, f);
         if ((await promisify(fs.stat)(l)).isDirectory()) {
-          yield directory(location, ...parts, f);
+          yield directory_raw(path.join(loc, f));
         } else {
-          yield file(location, ...parts, f);
+          yield file_raw(path.join(loc, f));
         }
       }
     },
@@ -151,9 +151,9 @@ export function directory(
       for (const f of files) {
         const l = path.join(loc, f);
         if ((await promisify(fs.stat)(l)).isDirectory()) {
-          yield* await directory(location, ...parts, f).children_recursive();
+          yield* await directory_raw(path.join(loc, f)).children_recursive();
         } else {
-          yield file(location, ...parts, f);
+          yield file_raw(path.join(loc, f));
         }
       }
     },
@@ -166,7 +166,7 @@ export function directory(
       });
     },
     async find(...p: string[]) {
-      const result = file(location, ...parts, ...p);
+      const result = file_raw(path.join(loc, ...p));
       if (!(await result.exists())) {
         throw new Error(result.path + " is not a file");
       }
@@ -174,7 +174,7 @@ export function directory(
       return result;
     },
     async try_find(...p: string[]) {
-      const result = file(location, ...parts, ...p);
+      const result = file_raw(path.join(loc, ...p));
       if (!(await result.exists())) {
         return null;
       }
@@ -182,10 +182,18 @@ export function directory(
       return result;
     },
     path: loc,
-    name: parts[parts.length - 1],
+    name: path.basename(loc),
     /** Can be used for type checking when getting children of a directory */
     isDirectoryType: true
   };
+}
+
+export function directory(
+  location: keyof typeof locations,
+  ...parts: string[]
+) {
+  const loc = path.join(locations[location], ...parts);
+  return directory_raw(loc);
 }
 
 export function is_file(

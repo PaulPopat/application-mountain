@@ -63,7 +63,12 @@ export async function get_app_info(appid: number) {
   const now = new Date().getTime();
   // Game info is valid for a day
   if (appFile && now - (await appFile.modified_at()) < 8.64e7) {
-    return await appFile.read_json("utf-8");
+    const data = await appFile.read_json("utf-8");
+    if (!IsGameInfo(data)) {
+      throw new Error("Invalid response from Steam server");
+    }
+
+    return data;
   }
 
   const response = await axios.get<unknown>(

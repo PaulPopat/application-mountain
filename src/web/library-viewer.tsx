@@ -1,9 +1,12 @@
 import React, { SFC, useState, Fragment } from "react";
 import { AppList } from "../util/types";
 import Scrollbars from "react-custom-scrollbars";
+import { AppDetails } from "./app-details";
+import { build_classes } from "../util/html_utils";
 
 export const LibraryViewer: SFC<{
   library: AppList;
+  installed: number[];
   children?: null | never;
 }> = p => {
   const [open, set_open] = useState(-1);
@@ -28,7 +31,10 @@ export const LibraryViewer: SFC<{
           p.library.map(a => (
             <Fragment key={a.appid}>
               <span
-                className="game-thumbnail-container"
+                className={build_classes({
+                  "game-thumbnail-container": true,
+                  installed: p.installed.find(i => i === a.appid) != null
+                })}
                 onClick={_ => toggleOpen(a.appid)}
               >
                 <span className="game-thumbnail">
@@ -43,7 +49,12 @@ export const LibraryViewer: SFC<{
                   <span className="game-name">{a.name}</span>
                 </span>
               </span>
-              {open === a.appid && <div>Open</div>}
+              {open === a.appid && (
+                <AppDetails
+                  installed={p.installed.find(i => i === a.appid) != null}
+                  appid={a.appid}
+                />
+              )}
             </Fragment>
           ))
         )}
