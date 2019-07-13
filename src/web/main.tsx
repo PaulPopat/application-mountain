@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { query } from "./messaging";
 import { LibraryViewer } from "./library-viewer";
 import { AppList, IsAppList } from "../util/types";
+import { Spinner } from "./widgets/icons";
 
 export class Main extends Component<
   { children?: null | never },
@@ -18,7 +19,17 @@ export class Main extends Component<
 
   public render() {
     if (!this.state) {
-      return <div>Loading Steam library, please wait.</div>;
+      return (
+        <div style={{ width: "100vw", height: "100vh" }}>
+          <div className="loading-container">
+            <Spinner
+              fill="rgba(255, 255, 255, 0.8)"
+              width="200px"
+              height="200px"
+            />
+          </div>
+        </div>
+      );
     }
 
     return (
