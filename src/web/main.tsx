@@ -21,6 +21,10 @@ export class Main extends Component<
       return <div>Loading Steam library, please wait.</div>;
     }
 
-    return <LibraryViewer library={this.state.library} />;
+    return (
+      <div style={{ width: "100vw", height: "100vh" }}>
+        <LibraryViewer library={this.state.library} />
+      </div>
+    );
   }
 }

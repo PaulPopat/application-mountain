@@ -13,7 +13,7 @@ function isDev() {
 let windows: BrowserWindow[] = [];
 async function createWindow() {
   const window = new BrowserWindow({
-    width: 1200,
+    width: 1223,
     height: 900,
     webPreferences: {
       nodeIntegration: true
