@@ -47,9 +47,11 @@ const LibraryItem: SFC<{
           {p.installed && <div className="installed fill" />}
         </span>
       </span>
-      <Modal show={open} onHide={() => set_open(false)}>
-        {open && <AppDetails appid={p.appid} installed={p.installed} />}
-      </Modal>
+      {open && (
+        <Modal onHide={() => set_open(false)}>
+          <AppDetails appid={p.appid} installed={p.installed} />
+        </Modal>
+      )}
     </Fragment>
   );
 };

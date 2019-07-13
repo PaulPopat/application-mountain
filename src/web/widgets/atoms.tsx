@@ -7,13 +7,18 @@ export const Loading: SFC<{
   show: boolean;
   width?: string;
   height?: string;
+  fill?: string;
 }> = p => (
   <Fade show={p.show} fill overlay>
     <div
       className="loading-container fill"
       style={{ width: p.width, height: p.height }}
     >
-      <Spinner fill="rgba(255, 255, 255, 0.8)" width="200px" height="200px" />
+      <Spinner
+        fill={p.fill || "rgba(255, 255, 255, 0.8)"}
+        width="200px"
+        height="200px"
+      />
     </div>
   </Fade>
 );
@@ -27,6 +32,18 @@ export const Columns: SFC = p => (
     ))}
   </div>
 );
+
+export const Container: SFC = p => (
+  <div className="container">{p.children}</div>
+);
+
+export const Section: SFC = p => (
+  <section className="section">
+    <Container>{p.children}</Container>
+  </section>
+);
+
+export const Field: SFC = p => <div className="field">{p.children}</div>;
 
 export const Heading: SFC<{
   subtitle?: boolean;
