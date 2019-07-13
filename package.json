@@ -1,0 +1,47 @@
+{
+  "name": "steam-library-manager",
+  "version": "1.0.0",
+  "description": "A simple web browser",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PaulPopat/steam-library-manager.git"
+  },
+  "author": "Paul Popat",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/PaulPopat/steam-library-manager/issues"
+  },
+  "homepage": "https://github.com/PaulPopat/steam-library-manager#readme",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "npm run build:types && npm run build:js && npm run build:css && npm run build:bundle",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
+    "build:css": "node-sass style/index.scss lib/index.css",
+    "build:bundle": "browserify lib/index.js -o lib/bundle.js",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/openid": "^2.0.1",
+    "browserify": "^16.3.0",
+    "bulma": "^0.7.5",
+    "electron": "^5.0.6",
+    "node-sass": "^4.12.0",
+    "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.4",
+    "axios": "^0.19.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
