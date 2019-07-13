@@ -1,7 +1,9 @@
 import React, { SFC, useState } from "react";
 import { GameInfo, IsGameInfo } from "../util/types";
 import { query } from "./messaging";
-import { Spinner } from "./widgets/icons";
+import { Loading } from "./widgets/atoms";
+import { Fade } from "./widgets/animations";
+import Scrollbars from "react-custom-scrollbars";
 
 export const AppDetails: SFC<{
   children?: null | never;
@@ -19,9 +21,16 @@ export const AppDetails: SFC<{
 
       set_details(d);
     });
-
-    return <Spinner fill="#666" width="100px" height="100px" />;
   }
 
-  return <div>{d.data.name}</div>;
+  return (
+    <>
+      <Loading show={!d || !d.data} />
+      <Fade show={d && d.data != null}>
+        <Scrollbars style={{ width: "50vw", height: "80vh" }}>
+          {d && d.data && <div>{d.data.name}</div>}
+        </Scrollbars>
+      </Fade>
+    </>
+  );
 };

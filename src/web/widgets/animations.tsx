@@ -6,6 +6,7 @@ type TransitionState = "hidden" | "showing" | "shown" | "hiding";
 type TransitionProps = {
   timeout: number;
   show: boolean;
+  finished?: (shown: boolean) => void;
   children: (state: TransitionState) => JSX.Element;
 };
 
@@ -21,6 +22,7 @@ class Transition extends Component<
           this.setState({ state: "showing" });
           setTimeout(() => {
             this.setState({ state: "shown" });
+            this.props.finished && this.props.finished(true);
           }, this.props.timeout);
         }, this.props.timeout);
       }, 1);
@@ -31,6 +33,7 @@ class Transition extends Component<
           this.setState({ state: "hidden" });
           setTimeout(() => {
             this.setState({ state: "fully-hidden" });
+            this.props.finished && this.props.finished(false);
           }, 1);
         }, this.props.timeout);
       }, this.props.timeout);
@@ -60,10 +63,11 @@ class Transition extends Component<
 
 export const Fade: SFC<{
   fill?: boolean;
+  finished?: (shown: boolean) => void;
   show: boolean;
   overlay?: boolean;
 }> = p => (
-  <Transition timeout={250} show={p.show}>
+  <Transition timeout={250} show={p.show} finished={p.finished}>
     {s => (
       <div
         className={build_classes({ [s]: true, fade: true, fill: p.fill })}
