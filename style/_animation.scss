@@ -1,0 +1,14 @@
+.fade {
+  transition: opacity 250ms ease-in-out;
+  opacity: 0;
+
+  &.showing,
+  &.shown {
+    opacity: 1;
+  }
+
+  &.hiding,
+  &.hidden {
+    opacity: 0;
+  }
+}

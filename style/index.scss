@@ -1,4 +1,5 @@
 @import "../node_modules/bulma/bulma.sass";
+@import "./animation";
 
 $main-gradient: linear-gradient(
   to right top,
@@ -14,13 +15,15 @@ html {
   overflow: hidden;
 }
 
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
 .loading-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: $main-gradient;
-  width: 100%;
-  height: 100%;
 }
 
 .library-view {
@@ -38,6 +41,13 @@ html {
   height: 104px;
   margin: 5px;
   overflow: visible;
+
+  .installed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: inset -1px -1px 40px 0px rgba(0, 208, 125, 1);
+  }
 }
 
 .game-thumbnail {
@@ -65,6 +75,10 @@ html {
     left: -10px;
     box-shadow: 0px 0px 100px 0px rgba(0, 0, 0, 1);
     z-index: 10;
+
+    .image-container {
+      height: 79px;
+    }
   }
 
   &:focus,
@@ -81,9 +95,10 @@ html {
     background-size: contain;
     background-position: center;
     background-color: #bbb;
+    transition: height 250ms;
 
     img {
-      width: 100%;
+      height: 100%;
     }
   }
 

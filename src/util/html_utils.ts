@@ -10,3 +10,7 @@ export function build_classes(classes: {
 
   return result.join(" ");
 }
+
+export function class_list(...classes: string[]) {
+  return classes.join(" ");
+}
