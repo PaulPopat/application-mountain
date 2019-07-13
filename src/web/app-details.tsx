@@ -1,7 +1,7 @@
 import React, { SFC, useState } from "react";
 import { GameInfo, IsGameInfo } from "../util/types";
-import { query } from "./messaging";
-import { Loading } from "./widgets/atoms";
+import { query, send } from "./messaging";
+import { Loading, Columns, Heading, Button } from "./widgets/atoms";
 import { Fade } from "./widgets/animations";
 import Scrollbars from "react-custom-scrollbars";
 
@@ -25,10 +25,25 @@ export const AppDetails: SFC<{
 
   return (
     <>
-      <Loading show={!d || !d.data} />
+      <Loading show={!d || !d.data} width="50vw" height="80vh" />
       <Fade show={d && d.data != null}>
         <Scrollbars style={{ width: "50vw", height: "80vh" }}>
-          {d && d.data && <div>{d.data.name}</div>}
+          {d && d.data && (
+            <>
+              <Columns>
+                <Heading level="1">{d.data.name}</Heading>
+              </Columns>
+              <Columns>
+                <Button
+                  onClick={() => send("start-app", p.appid)}
+                  type="primary"
+                  rounded
+                >
+                  {p.installed ? "Play Game" : "Install"}
+                </Button>
+              </Columns>
+            </>
+          )}
         </Scrollbars>
       </Fade>
     </>

@@ -7,6 +7,17 @@ html {
   overflow: hidden;
 }
 
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+}
+
+.curved {
+  border-radius: 6px;
+}
+
 .fill {
   width: 100%;
   height: 100%;
@@ -16,4 +27,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.columns {
+  margin: 0;
 }

@@ -7,6 +7,7 @@ import { Fade } from "./widgets/animations";
 import { Modal } from "./widgets/modal";
 import { AppDetails } from "./app-details";
 import { Loading } from "./widgets/atoms";
+import { thumbnail_url } from "../util/steam";
 
 async function get_data() {
   const library = await query("load-data");
@@ -38,9 +39,7 @@ const LibraryItem: SFC<{
         <span className="game-thumbnail">
           <span className="image-container">
             <img
-              src={`https://steamcdn-a.akamaihd.net/steam/apps/${
-                p.appid
-              }/capsule_184x69.jpg`}
+              src={thumbnail_url(p.appid)}
               onError={e => (e.currentTarget.style.display = "none")}
             />
           </span>

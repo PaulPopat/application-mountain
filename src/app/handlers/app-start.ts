@@ -4,6 +4,9 @@ import {
   get_cached_steam_library,
   get_steam_library
 } from "../providers/library-provider";
+import { IsNumber } from "../../util/type";
+import { spawn } from "child_process";
+import { file } from "../fs";
 
 (async () => {
   const coms = await get_coms();
@@ -43,5 +46,15 @@ import {
 
         return 0;
       });
+  });
+
+  coms.handle("start-app", async appid => {
+    if (!IsNumber(appid)) {
+      return;
+    }
+
+    spawn(file("steam", "Steam.exe").path, ["-applaunch", appid.toString()], {
+      detached: true
+    });
   });
 })();
