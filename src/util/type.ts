@@ -1,4 +1,4 @@
-type IsType<T> = T extends (arg: any) => arg is infer T ? T : never;
+export type IsType<T> = T extends (arg: any) => arg is infer T ? T : never;
 
 type Checker<T> = (arg: any) => arg is T;
 type CheckerObject = { [key: string]: Checker<any> };
@@ -41,8 +41,27 @@ export function IsLiteral<T extends string | number | boolean>(
 }
 
 export function IsArray<T>(checker: Checker<T>): Checker<T[]> {
-  return (arg): arg is T[] =>
-    Array.isArray(arg) && arg.filter(a => checker(a)).length !== arg.length;
+  return (arg): arg is T[] => {
+    if (!Array.isArray(arg)) {
+      console.warn(`Expected array but got ${typeof arg}`);
+      return false;
+    }
+
+    return !arg.find((a, i) => {
+      const result = checker(a);
+      if (!result) {
+        console.warn(
+          `Element ${i} of array was the wrong type; value was "${JSON.stringify(
+            a
+          ).substr(0, 80)}"`
+        );
+
+        return true;
+      }
+
+      return false;
+    });
+  };
 }
 
 export function IsUnion<T1>(c1: Checker<T1>): Checker<T1>;
@@ -83,6 +102,12 @@ export function IsObject<T extends CheckerObject>(
       }
 
       if (!checker[key](arg[key])) {
+        console.warn(
+          `Failed type check, value "${JSON.stringify(arg[key]).substr(
+            0,
+            80
+          )}" of ${key} was not the correct type.`
+        );
         return false;
       }
     }
@@ -93,10 +118,39 @@ export function IsObject<T extends CheckerObject>(
       }
 
       if (!checker[key]) {
+        console.warn(
+          `Failed type check, ${key} exists on object but not on checker.`
+        );
         return false;
       }
     }
 
     return true;
   }) as ObjectChecker<T>;
+}
+
+export function IsDictionary<T>(c: Checker<T>): Checker<{ [key: string]: T }> {
+  return (arg: any): arg is { [key: string]: T } => {
+    for (const key in arg) {
+      if (arg.hasOwnProperty(key)) {
+        continue;
+      }
+
+      if (!IsString(key)) {
+        return false;
+      }
+
+      if (!c(arg[key])) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+}
+
+export function Optional<T>(c: Checker<T>): Checker<T | null | undefined> {
+  return (arg: any): arg is T | null | undefined => {
+    return c(arg) || typeof arg === "undefined" || arg === null;
+  };
 }

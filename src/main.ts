@@ -1,6 +1,8 @@
 import "@babel/polyfill";
+import "./app/handlers/index";
 import { app, BrowserWindow } from "electron";
 import { messagingService } from "./app/messaging";
+import { set_coms } from "./app/coms-provider";
 
 function isDev() {
   return (
@@ -30,7 +32,7 @@ async function createWindow() {
     windows = windows.filter(w => w === window);
   });
 
-  const coms = messagingService(window);
+  set_coms(messagingService(window));
 }
 
 app.on("ready", createWindow);
