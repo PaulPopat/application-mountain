@@ -95,6 +95,15 @@ export function file(location: keyof typeof locations, ...parts: string[]) {
         });
       });
     },
+    modified_at() {
+      return new Promise<number>((res, rej) => {
+        fs.stat(loc, (err, stats) => {
+          if (err) rej(err);
+
+          res(stats.mtimeMs);
+        });
+      });
+    },
     path: loc,
     name: parts[parts.length - 1],
     /** Can be used for type checking when getting children of a directory */
@@ -148,10 +157,26 @@ export function directory(
         }
       }
     },
+    create() {
+      return new Promise((res, rej) => {
+        fs.mkdir(loc, err => {
+          if (err) rej(err);
+          res();
+        });
+      });
+    },
     async find(...p: string[]) {
       const result = file(location, ...parts, ...p);
       if (!(await result.exists())) {
         throw new Error(result.path + " is not a file");
+      }
+
+      return result;
+    },
+    async try_find(...p: string[]) {
+      const result = file(location, ...parts, ...p);
+      if (!(await result.exists())) {
+        return null;
       }
 
       return result;

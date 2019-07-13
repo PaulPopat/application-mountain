@@ -1,5 +1,5 @@
 import { directory, is_directory, file } from "../fs";
-import { IsSharedConfig, IsSteamLibrary } from "../../util/types";
+import { IsSharedConfig, IsSteamLibrary, IsGameInfo } from "../../util/types";
 import axios from "axios";
 
 export async function get_user_library() {
@@ -51,4 +51,34 @@ export async function get_cached_steam_library() {
 
   console.log("No cache, pulling from server");
   return await get_steam_library();
+}
+
+export async function get_app_info(appid: number) {
+  const infoDir = directory("data", "app-info");
+  if (!(await infoDir.exists())) {
+    await infoDir.create();
+  }
+
+  const appFile = await infoDir.try_find(appid.toString() + ".json");
+  const now = new Date().getTime();
+  // Game info is valid for a day
+  if (appFile && now - (await appFile.modified_at()) < 8.64e7) {
+    return await appFile.read_json("utf-8");
+  }
+
+  const response = await axios.get<unknown>(
+    `http://store.steampowered.com/api/appdetails?appids=${appid}`
+  );
+
+  if (response.status !== 200) {
+    throw new Error("Error while getting game info from steam");
+  }
+
+  const data = response.data;
+  if (!IsGameInfo(data)) {
+    throw new Error("Invalid response from Steam server");
+  }
+
+  await file("data", "app-info", appid.toString() + ".json").write_json(data);
+  return data;
 }
