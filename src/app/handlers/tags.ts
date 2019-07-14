@@ -11,7 +11,18 @@ import { IsString, IsArray, IsNumber, IsObject } from "../../util/type";
 (async () => {
   const coms = await get_coms();
   coms.handle("load-tags", async _ => {
-    return await get_tags();
+    const result = await get_tags();
+    return result.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+
+      if (a.name > b.name) {
+        return 1;
+      }
+
+      return 0;
+    });
   });
 
   coms.handle("add-tag", async name => {
