@@ -113,6 +113,7 @@ export const Check: SFC<IconProps> = p => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
+    {p.children}
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
