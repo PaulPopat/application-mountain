@@ -55,7 +55,9 @@ const locations = {
   data: path.join(app.getPath("appData"), dirname),
   downloads: app.getPath("downloads"),
   steam: steamAppPath || "",
-  steam_dir: path.dirname(steamAppPath || "")
+  get steam_dir() {
+    return path.dirname(steamAppPath || "");
+  }
 };
 
 export function file_raw(loc: string) {

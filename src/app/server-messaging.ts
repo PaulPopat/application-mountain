@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, Event } from "electron";
+import { BrowserWindow, ipcMain, Event, dialog } from "electron";
 
 export type MessagingService = {
   handle(message: string, handler: (arg: unknown) => Promise<unknown>): void;
@@ -12,7 +12,9 @@ export function messagingService(window: BrowserWindow): MessagingService {
   return {
     handle: (message: string, handler: (arg: unknown) => Promise<unknown>) => {
       ipcMain.on(message, async (e: Event, a: unknown) => {
-        window.webContents.send(message, await handler(a));
+        try {
+          window.webContents.send(message, await handler(a));
+        } catch {}
       });
     },
     wait: (message: string) => {
