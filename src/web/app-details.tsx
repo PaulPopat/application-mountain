@@ -24,7 +24,7 @@ export const AppDetails: SFC<{
 
   return (
     <>
-      <Scrollbars style={{ width: "50vw", height: "40vh" }}>
+      <Scrollbars style={{ width: "600px", height: "40vh" }}>
         <Loading loading={!d || !d.data} fill="#444">
           {d && d.data && (
             <>

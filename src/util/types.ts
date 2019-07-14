@@ -187,3 +187,13 @@ export const IsSteamLibrary = IsObject({
 });
 
 export type SteamLibrary = IsType<typeof IsSteamLibrary>;
+
+export const IsTagsList = IsArray(
+  IsObject({
+    id: IsString,
+    name: IsString,
+    apps: IsArray(IsNumber)
+  })
+);
+
+export type TagsList = IsType<typeof IsTagsList>;

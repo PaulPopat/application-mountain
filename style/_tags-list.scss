@@ -1,0 +1,64 @@
+.tags-container {
+  user-select: none;
+  padding: 10px;
+}
+
+.tag-item {
+  display: flex;
+  margin: 3px 0;
+  padding: 3px 6px;
+  border: 1px solid #333;
+  border-radius: 6px;
+
+  span {
+    flex: 1;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus,
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  &.selected {
+    background-color: #a8eb12;
+  }
+
+  .edit-button {
+    cursor: pointer;
+    opacity: 0;
+    background: #154690;
+    color: #00a8bb;
+    border: 1px solid #00a8bb;
+    border-radius: 3px;
+    font-size: 9px;
+    padding: 3px;
+    margin-top: 1px;
+
+    transition: opacity 100ms, background-color 150ms, color 150ms,
+      border-color 150ms;
+
+    &:hover {
+      background-color: #0079c2;
+    }
+
+    &.editing {
+      opacity: 1;
+      background-color: #00a8bb;
+      color: #154690;
+      border-color: #154690;
+    }
+  }
+
+  &:hover .edit-button {
+    opacity: 1;
+  }
+}
+
+.tag-block {
+  margin-bottom: 20px;
+}

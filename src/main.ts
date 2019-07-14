@@ -8,8 +8,8 @@ import environment from "./util/environment";
 let windows: BrowserWindow[] = [];
 async function createWindow() {
   const window = new BrowserWindow({
-    width: 1223,
-    height: 900,
+    width: 1300,
+    height: 920,
     webPreferences: {
       nodeIntegration: true
     },

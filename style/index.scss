@@ -1,6 +1,7 @@
 @import "../node_modules/bulma/bulma.sass";
 @import "./animation";
 @import "./library";
+@import "./tags-list";
 
 body,
 html {
@@ -101,6 +102,22 @@ html {
   flex-direction: column;
   flex-wrap: wrap;
   height: 100vh;
+
+  .body {
+    position: relative;
+    flex: 1;
+  }
+}
+
+.body {
+  display: flex;
+
+  .tags-display {
+    box-sizing: border-box;
+    height: 100%;
+    transition: width 150ms;
+    border-right: 1px solid #ddd;
+  }
 
   .library-view {
     position: relative;
