@@ -11,7 +11,10 @@
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
       "program": "${workspaceFolder}/lib/main.js",
       "cwd": "${workspaceFolder}",
-      "preLaunchTask": "npm: build"
+      "preLaunchTask": "npm: build",
+      "env": {
+        "DEVELOPMENT": "true"
+      }
     }
   ]
 }

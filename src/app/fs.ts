@@ -3,6 +3,7 @@ import path from "path";
 import { app, dialog, BrowserWindow } from "electron";
 import * as VDF from "@node-steam/vdf";
 import { promisify } from "util";
+import environment from "../util/environment";
 
 type Encoding =
   | "ascii"
@@ -13,9 +14,13 @@ type Encoding =
   | "utf-8"
   | "latin1";
 
+const dirname = environment.is_dev
+  ? "steam-library-manager"
+  : "Steam Library Manager";
+
 const steamAppPathPath = path.join(
   app.getPath("appData"),
-  "steam-library-manager",
+  dirname,
   "steam-path.txt"
 );
 let steamAppPath =
@@ -47,7 +52,7 @@ export async function set_steam_app_path(window: BrowserWindow) {
 }
 
 const locations = {
-  data: path.join(app.getPath("appData"), "steam-library-manager"),
+  data: path.join(app.getPath("appData"), dirname),
   downloads: app.getPath("downloads"),
   steam: steamAppPath || "",
   steam_dir: path.dirname(steamAppPath || "")

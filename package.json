@@ -12,7 +12,7 @@
     "url": "https://github.com/PaulPopat/steam-library-manager/issues"
   },
   "homepage": "https://github.com/PaulPopat/steam-library-manager#readme",
-  "main": "lib/index.js",
+  "main": "lib/main.js",
   "scripts": {
     "build": "npm run build:types && npm run build:js && npm run build:css && npm run build:bundle",
     "build:types": "tsc --emitDeclarationOnly",
@@ -20,7 +20,7 @@
     "build:css": "node-sass style/index.scss lib/index.css",
     "build:bundle": "browserify lib/index.js -o lib/bundle.js",
     "start": "electron .",
-    "package": "npm run build && electron-packager ./ \"Steam Library Manager\" --platform=win32 --arch=x64 --icon=\"./Icon.png\""
+    "package": "npm run build && electron-packager ./ \"Steam Library Manager\" --platform=win32 --arch=x64 --icon=Icon.png"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

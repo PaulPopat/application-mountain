@@ -20,9 +20,11 @@ async function createWindow() {
 
   windows = [...windows, window];
 
-  window.loadFile("../index.html");
   if (environment.is_dev) {
+    window.loadFile("../index.html");
     window.webContents.openDevTools();
+  } else {
+    window.loadFile("index.html");
   }
 
   window.on("closed", () => {

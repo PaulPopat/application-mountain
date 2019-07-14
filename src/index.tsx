@@ -1,6 +1,6 @@
 import "@babel/polyfill";
 import React from "react";
 import ReactDOM from "react-dom";
-import { Main } from "./web/main";
+import { Main } from "./web/web-main";
 
 ReactDOM.render(<Main />, document.getElementById("react-root"));
