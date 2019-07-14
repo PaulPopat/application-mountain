@@ -1,8 +1,7 @@
 import React, { SFC, useState } from "react";
 import { GameInfo, IsGameInfo } from "../util/types";
 import { query, send } from "./messaging";
-import { Loading, Heading, Button, Section, Field } from "./widgets/atoms";
-import { Fade } from "./widgets/animations";
+import { Loading, Heading, Button, Field } from "./widgets/atoms";
 import Scrollbars from "react-custom-scrollbars";
 
 export const AppDetails: SFC<{
@@ -26,22 +25,23 @@ export const AppDetails: SFC<{
   return (
     <>
       <Scrollbars style={{ width: "50vw", height: "40vh" }}>
-        <Loading show={!d || !d.data} fill="#444" />
-        {d && d.data && (
-          <Fade show={true}>
-            <Heading level="1">{d.data.name}</Heading>
-            <Field>
-              <Button
-                onClick={() => send("start-app", p.appid)}
-                type="primary"
-                rounded
-              >
-                {p.installed ? "Play Game" : "Install"}
-              </Button>
-            </Field>
-            <p>{d.data.short_description}</p>
-          </Fade>
-        )}
+        <Loading loading={!d || !d.data} fill="#444">
+          {d && d.data && (
+            <>
+              <Heading level="1">{d.data.name}</Heading>
+              <Field>
+                <Button
+                  onClick={() => send("start-app", p.appid)}
+                  type="primary"
+                  rounded
+                >
+                  {p.installed ? "Play Game" : "Install"}
+                </Button>
+              </Field>
+              <p>{d.data.short_description}</p>
+            </>
+          )}
+        </Loading>
       </Scrollbars>
     </>
   );

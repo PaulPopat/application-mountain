@@ -4,23 +4,28 @@ import { Spinner } from "./icons";
 import { build_classes } from "../../util/html_utils";
 
 export const Loading: SFC<{
-  show: boolean;
+  loading: boolean;
   width?: string;
   height?: string;
   fill?: string;
 }> = p => (
-  <Fade show={p.show} fill overlay>
-    <div
-      className="loading-container fill"
-      style={{ width: p.width, height: p.height }}
-    >
-      <Spinner
-        fill={p.fill || "rgba(255, 255, 255, 0.8)"}
-        width="200px"
-        height="200px"
-      />
-    </div>
-  </Fade>
+  <>
+    <Fade show={p.loading} fill overlay>
+      <div
+        className="loading-container fill"
+        style={{ width: p.width, height: p.height }}
+      >
+        <Spinner
+          fill={p.fill || "rgba(255, 255, 255, 0.8)"}
+          width="200px"
+          height="200px"
+        />
+      </div>
+    </Fade>
+    <Fade show={!p.loading} fill overlay>
+      {p.children}
+    </Fade>
+  </>
 );
 
 export const Columns: SFC = p => (
