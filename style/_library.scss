@@ -23,11 +23,15 @@
   overflow: visible;
   z-index: 0;
 
-  .installed {
+  .selected {
     position: absolute;
-    top: 0;
-    left: 0;
-    box-shadow: inset -1px -1px 40px 0px rgba(0, 208, 125, 1);
+    top: 5px;
+    right: 5px;
+    background: #0079c2;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    height: 20px;
+    width: 20px;
   }
 }
 

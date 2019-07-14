@@ -2,6 +2,7 @@ import React, { SFC, Fragment } from "react";
 import { AppList } from "../util/types";
 import Scrollbars from "react-custom-scrollbars";
 import { thumbnail_url } from "../util/steam";
+import { Check } from "./widgets/icons";
 
 const LibraryItem: SFC<{
   appid: number;
@@ -23,7 +24,11 @@ const LibraryItem: SFC<{
             />
           </span>
           <span className="game-name">{p.name}</span>
-          {p.selected && <div className="installed fill" />}
+          {p.selected && (
+            <div className="selected">
+              <Check fill="#fff" width="18px" height="18px" />
+            </div>
+          )}
         </span>
       </span>
     </Fragment>
