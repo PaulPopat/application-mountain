@@ -7,6 +7,7 @@ import {
 import { IsNumber } from "../../util/type";
 import { spawn } from "child_process";
 import { file, set_steam_app_path } from "../fs";
+import { shell } from "electron";
 
 (async () => {
   const coms = await get_coms();
@@ -57,5 +58,9 @@ import { file, set_steam_app_path } from "../fs";
     spawn(file("steam").path, ["-applaunch", appid.toString()], {
       detached: true
     });
+  });
+
+  coms.handle("open-store", async _ => {
+    shell.openExternal("https://store.steampowered.com/");
   });
 })();

@@ -6,6 +6,7 @@ import { IsArray, IsNumber } from "../util/type";
 import { Loading } from "./widgets/atoms";
 import { Modal } from "./widgets/modal";
 import { AppDetails } from "./app-details";
+import { Header } from "./header";
 
 export class Main extends Component<
   { children?: null | never },
@@ -20,7 +21,7 @@ export class Main extends Component<
     };
   }
 
-  public async componentDidMount() {
+  private readonly refresh = async () => {
     const library = await query("load-data");
     if (!IsAppList(library)) {
       throw new Error("Invalid library");
@@ -32,21 +33,24 @@ export class Main extends Component<
     }
 
     this.setState({ library, installed });
+  };
+
+  public async componentDidMount() {
+    this.refresh();
   }
 
   public render() {
     return (
-      <>
-        <div style={{ width: "100vw", height: "100vh" }}>
-          <div className="library-view fill">
-            <Loading loading={this.state.library.length === 0}>
-              <LibraryViewer
-                library={this.state.library}
-                selected={this.state.installed}
-                onSelect={appid => this.setState(s => ({ ...s, open: appid }))}
-              />
-            </Loading>
-          </div>
+      <div className="app">
+        <Header onRefresh={this.refresh} />
+        <div className="library-view">
+          <Loading loading={this.state.library.length === 0}>
+            <LibraryViewer
+              library={this.state.library}
+              selected={this.state.installed}
+              onSelect={appid => this.setState(s => ({ ...s, open: appid }))}
+            />
+          </Loading>
         </div>
 
         <Modal
@@ -62,7 +66,7 @@ export class Main extends Component<
             />
           )}
         </Modal>
-      </>
+      </div>
     );
   }
 }

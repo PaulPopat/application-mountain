@@ -50,6 +50,8 @@ export const Section: SFC = p => (
 
 export const Field: SFC = p => <div className="field">{p.children}</div>;
 
+export const Buttons: SFC = p => <div className="buttons">{p.children}</div>;
+
 export const Heading: SFC<{
   subtitle?: boolean;
   level: "1" | "2" | "3" | "4" | "5" | "6";
