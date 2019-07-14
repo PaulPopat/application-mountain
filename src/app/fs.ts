@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { app } from "electron";
+import { app, dialog, BrowserWindow } from "electron";
 import * as VDF from "@node-steam/vdf";
 import { promisify } from "util";
 
@@ -13,10 +13,44 @@ type Encoding =
   | "utf-8"
   | "latin1";
 
+const steamAppPathPath = path.join(
+  app.getPath("appData"),
+  "steam-library-manager",
+  "steam-path.txt"
+);
+let steamAppPath =
+  fs.existsSync(steamAppPathPath) && fs.readFileSync(steamAppPathPath, "utf-8");
+
+export async function set_steam_app_path(window: BrowserWindow) {
+  if (!steamAppPath) {
+    const loc = await new Promise<string>((res, rej) => {
+      dialog.showOpenDialog(
+        window,
+        {
+          properties: ["openFile"],
+          title: "Please locate your steam executable"
+        },
+        p => {
+          if (!p || p.length > 1 || p.length === 0) {
+            rej(new Error("Invalid file selection"));
+            return;
+          }
+
+          res(p[0]);
+        }
+      );
+    });
+
+    await promisify(fs.writeFile)(steamAppPathPath, loc);
+    steamAppPath = loc;
+  }
+}
+
 const locations = {
   data: path.join(app.getPath("appData"), "steam-library-manager"),
   downloads: app.getPath("downloads"),
-  steam: path.join("C:", "Program Files (x86)", "Steam")
+  steam: steamAppPath || "",
+  steam_dir: path.dirname(steamAppPath || "")
 };
 
 export function file_raw(loc: string) {
@@ -30,7 +64,6 @@ export function file_raw(loc: string) {
       });
     },
     write_json(data: any) {
-      console.log(loc);
       return new Promise((res, rej) => {
         fs.writeFile(loc, JSON.stringify(data), err => {
           if (err) rej(err);

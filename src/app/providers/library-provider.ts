@@ -1,9 +1,10 @@
 import { directory, is_directory, file } from "../fs";
 import { IsSharedConfig, IsSteamLibrary, IsGameInfo } from "../../util/types";
 import axios from "axios";
+import { info } from "../../util/logger";
 
 export async function get_user_library() {
-  for await (const user of directory("steam", "userdata").children()) {
+  for await (const user of directory("steam_dir", "userdata").children()) {
     if (!is_directory(user)) {
       throw new Error("userdata/{user} should be a directory");
     }
@@ -41,7 +42,6 @@ export async function get_steam_library() {
 
 export async function get_cached_steam_library() {
   const libraryFile = file("data", "steam-library.json");
-
   if (await libraryFile.exists()) {
     const result = await libraryFile.read_json("utf-8");
     if (IsSteamLibrary(result)) {
@@ -49,7 +49,7 @@ export async function get_cached_steam_library() {
     }
   }
 
-  console.log("No cache, pulling from server");
+  info("No cache, pulling from server");
   return await get_steam_library();
 }
 

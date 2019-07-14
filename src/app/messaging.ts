@@ -5,6 +5,7 @@ export type MessagingService = {
   wait(message: string): Promise<unknown>;
   query(message: string, arg?: any): Promise<unknown>;
   send(message: string, arg?: any): void;
+  readonly window: BrowserWindow;
 };
 
 export function messagingService(window: BrowserWindow): MessagingService {
@@ -31,6 +32,9 @@ export function messagingService(window: BrowserWindow): MessagingService {
     },
     send: (message: string, arg?: any) => {
       window.webContents.send(message, arg);
+    },
+    get window() {
+      return window;
     }
   };
 }

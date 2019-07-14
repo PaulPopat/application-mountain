@@ -1,3 +1,5 @@
+import { warn } from "./logger";
+
 export type IsType<T> = T extends (arg: any) => arg is infer T ? T : never;
 
 type Checker<T> = (arg: any) => arg is T;
@@ -43,14 +45,14 @@ export function IsLiteral<T extends string | number | boolean>(
 export function IsArray<T>(checker: Checker<T>): Checker<T[]> {
   return (arg): arg is T[] => {
     if (!Array.isArray(arg)) {
-      console.warn(`Expected array but got ${typeof arg}`);
+      warn(`Expected array but got ${typeof arg}`);
       return false;
     }
 
     return !arg.find((a, i) => {
       const result = checker(a);
       if (!result) {
-        console.warn(
+        warn(
           `Element ${i} of array was the wrong type; value was "${JSON.stringify(
             a
           ).substr(0, 80)}"`
@@ -102,7 +104,7 @@ export function IsObject<T extends CheckerObject>(
       }
 
       if (!checker[key](arg[key])) {
-        console.warn(
+        warn(
           `Failed type check, value "${JSON.stringify(arg[key]).substr(
             0,
             80
@@ -118,9 +120,7 @@ export function IsObject<T extends CheckerObject>(
       }
 
       if (!checker[key]) {
-        console.warn(
-          `Failed type check, ${key} exists on object but not on checker.`
-        );
+        warn(`Failed type check, ${key} exists on object but not on checker.`);
         return false;
       }
     }

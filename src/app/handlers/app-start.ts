@@ -6,12 +6,13 @@ import {
 } from "../providers/library-provider";
 import { IsNumber } from "../../util/type";
 import { spawn } from "child_process";
-import { file } from "../fs";
+import { file, set_steam_app_path } from "../fs";
 
 (async () => {
   const coms = await get_coms();
 
   coms.handle("load-data", async tag => {
+    await set_steam_app_path(coms.window);
     const userLibrary = await get_user_library();
     let steamLibrary = await get_cached_steam_library();
     const userApps: number[] = [];
@@ -53,7 +54,7 @@ import { file } from "../fs";
       return;
     }
 
-    spawn(file("steam", "Steam.exe").path, ["-applaunch", appid.toString()], {
+    spawn(file("steam").path, ["-applaunch", appid.toString()], {
       detached: true
     });
   });

@@ -53,12 +53,14 @@ export class Main extends Component<
           show={this.state.open !== -1}
           onHide={() => this.setState(s => ({ ...s, open: -1 }))}
         >
-          <AppDetails
-            appid={this.state.open}
-            installed={
-              this.state.installed.find(i => i === this.state.open) != null
-            }
-          />
+          {this.state.open !== -1 && (
+            <AppDetails
+              appid={this.state.open}
+              installed={
+                this.state.installed.find(i => i === this.state.open) != null
+              }
+            />
+          )}
         </Modal>
       </>
     );

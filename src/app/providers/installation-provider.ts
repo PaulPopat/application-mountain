@@ -8,12 +8,12 @@ async function get_install_dirs() {
     return installDirectories;
   }
 
-  installDirectories.push(directory("steam", "steamapps"));
+  installDirectories.push(directory("steam_dir", "steamapps"));
 
   // The data in question is a numeric with extra parameters,
   // this currently cannot be represented by the type checkers.
   const data: any = await file(
-    "steam",
+    "steam_dir",
     "steamapps",
     "libraryfolders.vdf"
   ).read_vdf("utf-8");

@@ -3,12 +3,7 @@ import "./app/handlers/index";
 import { app, BrowserWindow } from "electron";
 import { messagingService } from "./app/messaging";
 import { set_coms } from "./app/coms-provider";
-
-function isDev() {
-  return (
-    process.mainModule && process.mainModule.filename.indexOf("app.asar") === -1
-  );
-}
+import environment from "./util/environment";
 
 let windows: BrowserWindow[] = [];
 async function createWindow() {
@@ -24,7 +19,7 @@ async function createWindow() {
   windows = [...windows, window];
 
   window.loadFile("../index.html");
-  if (isDev()) {
+  if (environment.is_dev) {
     window.webContents.openDevTools();
   }
 
