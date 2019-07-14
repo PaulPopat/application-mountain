@@ -63,4 +63,8 @@ import { shell } from "electron";
   coms.handle("open-store", async _ => {
     shell.openExternal("https://store.steampowered.com/");
   });
+
+  coms.handle("close-window", async _ => {
+    coms.window.close();
+  });
 })();

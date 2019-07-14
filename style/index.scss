@@ -38,6 +38,9 @@ html {
 }
 
 .header {
+  position: relative;
+  -webkit-app-region: drag;
+
   display: flex;
   padding: 11px;
   background: #333;
@@ -51,6 +54,45 @@ html {
   .title {
     margin-left: 20px;
     color: inherit;
+    user-select: none;
+  }
+
+  .button {
+    -webkit-app-region: no-drag;
+  }
+
+  .window-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    -webkit-app-region: no-drag;
+  }
+
+  .close-button {
+    position: relative;
+    margin: 10px;
+
+    cursor: pointer;
+
+    width: 20px;
+    height: 20px;
+
+    transition: width 150ms, height 150ms, margin 150ms;
+
+    &:hover {
+      width: 30px;
+      height: 30px;
+      margin: 5px;
+    }
+
+    &:focus,
+    &:active {
+      opacity: 0.8;
+    }
+
+    svg {
+      display: block;
+    }
   }
 }
 

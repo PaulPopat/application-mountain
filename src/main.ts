@@ -12,8 +12,10 @@ async function createWindow() {
     height: 900,
     webPreferences: {
       nodeIntegration: true
-    }
+    },
+    frame: false
   });
+
   window.setMenuBarVisibility(false);
 
   windows = [...windows, window];
