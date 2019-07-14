@@ -1,7 +1,7 @@
 import "@babel/polyfill";
 import "./app/handlers/index";
 import { app, BrowserWindow } from "electron";
-import { messagingService } from "./app/messaging";
+import { messagingService } from "./app/server-messaging";
 import { set_coms } from "./app/coms-provider";
 import environment from "./util/environment";
 

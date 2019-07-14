@@ -1,4 +1,4 @@
-import { MessagingService } from "./messaging";
+import { MessagingService } from "./server-messaging";
 
 let coms: MessagingService;
 let awaiters: ((coms: MessagingService) => void)[] = [];

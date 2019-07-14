@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { LibraryViewer } from "./library-viewer";
-import { query, send } from "./messaging";
+import { query, send } from "./web-messaging";
 import { AppList, IsAppList, TagsList, IsTagsList } from "../util/types";
 import { IsArray, IsNumber, IsString } from "../util/type";
 import { Loading, Button } from "./widgets/atoms";

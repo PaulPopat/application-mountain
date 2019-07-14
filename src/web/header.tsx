@@ -1,6 +1,6 @@
 import React, { SFC } from "react";
 import { Button, Heading, Buttons } from "./widgets/atoms";
-import { send } from "./messaging";
+import { send } from "./web-messaging";
 import { Close } from "./widgets/icons";
 
 export const Header: SFC<{

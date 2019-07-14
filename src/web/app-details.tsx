@@ -1,6 +1,6 @@
 import React, { SFC, useState } from "react";
 import { GameInfo, IsGameInfo } from "../util/types";
-import { query, send } from "./messaging";
+import { query, send } from "./web-messaging";
 import { Loading, Heading, Button, Field } from "./widgets/atoms";
 import Scrollbars from "react-custom-scrollbars";
 
