@@ -20,7 +20,7 @@
     "build:css": "node-sass style/index.scss lib/index.css",
     "build:bundle": "browserify lib/index.js -o lib/bundle.js",
     "start": "electron .",
-    "package": "npm run build && electron-packager ./ \"Steam Library Manager\" --platform=win32 --arch=x64 --icon=Icon.png"
+    "package": "npm run build && electron-packager ./ \"Steam Library Manager\" --platform=win32 --arch=x64 --icon=Icon.ico"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
