@@ -6,17 +6,17 @@
 .tag-item {
   display: flex;
   margin: 3px 0;
-  padding: 3px 6px;
-  border: 1px solid #333;
-  border-radius: 6px;
+  padding: 3px 12px;
+  border: 1px solid #444;
+  color: #444;
+  border-radius: 20px;
+  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.4);
+  transition: opacity 100ms, background-color 150ms, color 150ms,
+    border-color 150ms, box-shadow 250ms;
 
   span {
     flex: 1;
     cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
 
     &:focus,
     &:active {
@@ -25,7 +25,15 @@
   }
 
   &.selected {
-    background-color: #a8eb12;
+    background-color: #c6e878;
+    border: 1px solid #164834;
+    color: #164834;
+
+    &:hover {
+      background-color: #c6e878;
+      border: 1px solid #164834;
+      color: #164834;
+    }
   }
 
   .edit-button {
@@ -34,9 +42,9 @@
     background: #154690;
     color: #00a8bb;
     border: 1px solid #00a8bb;
-    border-radius: 3px;
+    border-radius: 17px;
     font-size: 9px;
-    padding: 3px;
+    padding: 4px;
     margin-top: 1px;
 
     transition: opacity 100ms, background-color 150ms, color 150ms,
@@ -54,8 +62,15 @@
     }
   }
 
-  &:hover .edit-button {
-    opacity: 1;
+  &:hover {
+    background-color: #f2f2f2;
+    border-color: #666;
+    color: #666;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+
+    .edit-button {
+      opacity: 1;
+    }
   }
 }
 
