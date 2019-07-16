@@ -27,7 +27,10 @@ export class Modal extends Component<ModalProps, { shown: boolean }> {
         overlay
       >
         <div className="modal is-active">
-          <div className="modal-background" />
+          <div
+            className="modal-background"
+            onClick={e => this.setState({ shown: false })}
+          />
           <div className="modal-content">
             <div className="box">{this.props.children}</div>
           </div>
