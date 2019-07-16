@@ -128,3 +128,8 @@ html {
 .tag.is-delete {
   cursor: pointer;
 }
+
+.tags .tags {
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+}
