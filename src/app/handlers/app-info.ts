@@ -2,7 +2,7 @@ import { get_coms } from "../coms-provider";
 import { get_app_info } from "../providers/library-provider";
 import { IsNumber } from "../../util/type";
 import { get_installed_apps } from "../providers/installation-provider";
-import { get_tags_on_app } from "../providers/tags-provider";
+import { get_tags_on_app, get_tags } from "../providers/tags-provider";
 
 (async () => {
   const coms = await get_coms();

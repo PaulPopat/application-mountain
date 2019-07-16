@@ -199,6 +199,7 @@ export class Main extends Component<
                     this.state.installed.find(i => i === this.state.open) !=
                     null
                   }
+                  all-tags={this.state.tags}
                 />
               )}
             </Modal>

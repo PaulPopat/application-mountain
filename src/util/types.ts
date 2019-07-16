@@ -132,8 +132,12 @@ export const IsGameInfo = IsDictionary(
           linux: IsBoolean
         }),
         metacritic: IsObject({ score: IsNumber, url: IsString }),
-        categories: IsArray(IsObject({ id: IsNumber, description: IsString })),
-        genres: IsArray(IsObject({ id: IsNumber, description: IsString })),
+        categories: Optional(
+          IsArray(IsObject({ id: IsNumber, description: IsString }))
+        ),
+        genres: Optional(
+          IsArray(IsObject({ id: IsNumber, description: IsString }))
+        ),
         screenshots: IsArray(
           IsObject({
             id: IsNumber,

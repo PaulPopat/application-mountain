@@ -117,7 +117,7 @@ export const Button: React.SFC<
 );
 
 export const Tag: React.SFC<{
-  color?:
+  colour?:
     | "black"
     | "dark"
     | "light"
@@ -130,18 +130,24 @@ export const Tag: React.SFC<{
     | "danger";
   size?: "normal" | "medium" | "large";
   rounded?: boolean;
-}> = p => (
-  <div
-    className={build_classes({
-      tag: true,
-      [`is-${p.color}`]: p.color != null,
-      [`is-${p.size}`]: p.size != null,
-      "is-rounded": p.rounded
-    })}
-  >
-    {p.children}
-  </div>
-);
+  onClick?: () => void;
+  "is-delete"?: boolean;
+}> = p => {
+  const classes = build_classes({
+    tag: true,
+    [`is-${p.colour}`]: p.colour != null,
+    [`is-${p.size}`]: p.size != null,
+    "is-rounded": p.rounded,
+    "is-delete": p["is-delete"]
+  });
+  return p.onClick ? (
+    <a href="javascript:void(0);" onClick={p.onClick} className={classes}>
+      {p.children}
+    </a>
+  ) : (
+    <div className={classes}>{p.children}</div>
+  );
+};
 
 export const Tags: React.SFC<{
   "has-addons"?: boolean;
