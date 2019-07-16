@@ -47,7 +47,9 @@ export const AppDetails: SFC<{
                 </Button>
               </Field>
               <Field>
-                <p>{d.data.short_description}</p>
+                <p
+                  dangerouslySetInnerHTML={{ __html: d.data.short_description }}
+                />
               </Field>
               {details.tags.length > 0 && (
                 <>
