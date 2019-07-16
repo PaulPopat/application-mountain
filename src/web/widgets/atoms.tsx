@@ -115,3 +115,43 @@ export const Button: React.SFC<
     {props.children}
   </div>
 );
+
+export const Tag: React.SFC<{
+  color?:
+    | "black"
+    | "dark"
+    | "light"
+    | "white"
+    | "primary"
+    | "link"
+    | "info"
+    | "success"
+    | "warning"
+    | "danger";
+  size?: "normal" | "medium" | "large";
+  rounded?: boolean;
+}> = p => (
+  <div
+    className={build_classes({
+      tag: true,
+      [`is-${p.color}`]: p.color != null,
+      [`is-${p.size}`]: p.size != null,
+      "is-rounded": p.rounded
+    })}
+  >
+    {p.children}
+  </div>
+);
+
+export const Tags: React.SFC<{
+  "has-addons"?: boolean;
+}> = p => (
+  <div
+    className={build_classes({
+      tags: true,
+      "has-addons": p["has-addons"]
+    })}
+  >
+    {p.children}
+  </div>
+);

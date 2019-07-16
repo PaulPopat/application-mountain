@@ -6,7 +6,7 @@ import {
   remove_app,
   remove_tag
 } from "../providers/tags-provider";
-import { IsString, IsArray, IsNumber, IsObject } from "../../util/type";
+import { IsString, IsNumber, IsObject } from "../../util/type";
 
 (async () => {
   const coms = await get_coms();

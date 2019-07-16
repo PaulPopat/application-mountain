@@ -67,3 +67,8 @@ export async function remove_app(id: string, app: number) {
   tag.apps = tag.apps.filter(a => a !== app);
   write_tags(tags);
 }
+
+export async function get_tags_on_app(app: number) {
+  const tags = await get_tags();
+  return tags.filter(t => t.apps.find(a => a === app));
+}
