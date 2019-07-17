@@ -20,7 +20,6 @@ export class InputField extends Component<{
             <p className="control">
               <input
                 className="input is-small"
-                type="email"
                 ref={this.inputRef}
                 placeholder={this.props.placeholder}
                 onKeyUp={e => {

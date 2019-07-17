@@ -19,6 +19,7 @@ export class Main extends Component<
     editing: string | null;
     selected: string[];
     loading: boolean;
+    search: string;
   }
 > {
   public constructor(props: any, context: any) {
@@ -30,7 +31,8 @@ export class Main extends Component<
       tags: [],
       editing: null,
       selected: [],
-      loading: true
+      loading: true,
+      search: ""
     };
   }
 
@@ -43,9 +45,9 @@ export class Main extends Component<
     return tag;
   };
 
-  private readonly refresh = async (tagids: string[]) => {
+  private readonly refresh = async (tagids: string[], filter: string) => {
     this.setState(s => ({ ...s, loading: true }));
-    const library = await query("load-data", tagids);
+    const library = await query("load-data", { tags: tagids, filter });
     if (!IsAppList(library)) {
       throw new Error("Invalid library");
     }
@@ -67,13 +69,13 @@ export class Main extends Component<
       open: -1,
       tags,
       editing: null,
-      selected: tagids
+      selected: tagids,
+      search: filter
     };
   };
 
   public async componentDidMount() {
-    const data = await this.refresh(this.state.selected);
-    this.setState(data);
+    this.setState(await this.refresh(this.state.selected, this.state.search));
   }
 
   public render() {
@@ -81,14 +83,18 @@ export class Main extends Component<
       <div className="app">
         <Header
           onRefresh={async () =>
-            this.setState(await this.refresh(this.state.selected))
+            this.setState(
+              await this.refresh(this.state.selected, this.state.search)
+            )
           }
           canDeleteTag={this.state.selected != null}
           onDeleteTag={async () => {
             await query("remove-tag", this.state.selected);
-            const data = await this.refresh([]);
-            this.setState({ ...data });
+            this.setState(await this.refresh([], this.state.search));
           }}
+          onSearch={async filter =>
+            this.setState(await this.refresh(this.state.selected, filter))
+          }
         />
         <div className="body">
           <TagsView
@@ -98,7 +104,10 @@ export class Main extends Component<
               this.state.selected
             }
             onEditTag={async id => {
-              this.setState({ ...(await this.refresh([])), editing: id });
+              this.setState({
+                ...(await this.refresh([], this.state.search)),
+                editing: id
+              });
             }}
             onAddTag={async name => {
               const id = await query("add-tag", name);
@@ -113,16 +122,24 @@ export class Main extends Component<
             }}
             onSelectTag={async id => {
               if (!id) {
-                this.setState(await this.refresh([]));
+                this.setState(await this.refresh([], this.state.search));
                 return;
               }
               if (!this.state.selected.find(i => i === id)) {
-                this.setState(await this.refresh([...this.state.selected, id]));
+                this.setState(
+                  await this.refresh(
+                    [...this.state.selected, id],
+                    this.state.search
+                  )
+                );
                 return;
               }
 
               this.setState(
-                await this.refresh(this.state.selected.filter(i => i !== id))
+                await this.refresh(
+                  this.state.selected.filter(i => i !== id),
+                  this.state.search
+                )
               );
             }}
             editing={this.state.editing != null}
