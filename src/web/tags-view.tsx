@@ -58,7 +58,7 @@ export class TagsView extends Component<
             <div
               className={build_classes({
                 "tag-item": true,
-                selected: !this.props.selected
+                selected: this.props.selected.length < 1
               })}
             >
               {this.props.editing ? (

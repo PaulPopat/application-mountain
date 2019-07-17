@@ -91,7 +91,7 @@ export class Main extends Component<
               await this.refresh(this.state.selected, this.state.search)
             )
           }
-          canDeleteTag={this.state.selected != null}
+          canDeleteTag={this.state.selected.length > 0}
           onDeleteTag={async () => {
             await query("remove-tag", this.state.selected);
             this.setState(await this.refresh([], this.state.search));
