@@ -117,7 +117,17 @@ export class Main extends Component<
 
               this.setState(s => ({
                 ...s,
-                tags: [...s.tags, { name, id, apps: [] }]
+                tags: [...s.tags, { name, id, apps: [] }].sort((a, b) => {
+                  if (a.name < b.name) {
+                    return -1;
+                  }
+
+                  if (a.name > b.name) {
+                    return 1;
+                  }
+
+                  return 0;
+                })
               }));
             }}
             onSelectTag={async id => {
