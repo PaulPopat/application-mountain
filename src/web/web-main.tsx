@@ -45,7 +45,7 @@ export class Main extends Component<
 
   private readonly refresh = async (tagid?: string | null) => {
     this.setState(s => ({ ...s, loading: true }));
-    const library = await query("load-data", tagid);
+    const library = await query("load-data", [tagid]);
     if (!IsAppList(library)) {
       throw new Error("Invalid library");
     }
