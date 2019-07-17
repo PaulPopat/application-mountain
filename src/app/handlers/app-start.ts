@@ -9,15 +9,16 @@ import { spawn } from "child_process";
 import { file, set_steam_app_path } from "../fs";
 import { shell } from "electron";
 import { get_tag } from "../providers/tags-provider";
+import { AppList } from "../../util/types";
 
 (async () => {
   const coms = await get_coms();
 
-  coms.handle("load-data", async options => {
-    if (!IsObject({ tags: IsArray(IsString), filter: IsString })(options)) {
-      throw new Error("Invalid options format");
+  let apps: AppList = [];
+  async function get_apps_list() {
+    if (apps.length) {
+      return apps;
     }
-
     await set_steam_app_path(coms.window);
     const userLibrary = await get_user_library();
     let steamLibrary = await get_cached_steam_library();
@@ -40,7 +41,7 @@ import { get_tag } from "../providers/tags-provider";
       steamLibrary = await get_steam_library();
     }
 
-    let result = steamLibrary.applist.apps
+    const result = steamLibrary.applist.apps
       .filter(a => userApps.find(u => a.appid === u))
       .sort((a, b) => {
         if (a.name < b.name) {
@@ -53,6 +54,17 @@ import { get_tag } from "../providers/tags-provider";
 
         return 0;
       });
+
+    apps = result;
+    return result;
+  }
+
+  coms.handle("load-data", async options => {
+    if (!IsObject({ tags: IsArray(IsString), filter: IsString })(options)) {
+      throw new Error("Invalid options format");
+    }
+
+    let result = await get_apps_list();
 
     for (const tagid of options.tags) {
       const tag = await get_tag(tagid);

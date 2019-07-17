@@ -46,7 +46,10 @@ export class Main extends Component<
   };
 
   private readonly refresh = async (tagids: string[], filter: string) => {
-    this.setState(s => ({ ...s, loading: true }));
+    const timeout = setTimeout(
+      () => this.setState(s => ({ ...s, loading: true })),
+      100
+    );
     const library = await query("load-data", { tags: tagids, filter });
     if (!IsAppList(library)) {
       throw new Error("Invalid library");
@@ -62,7 +65,7 @@ export class Main extends Component<
       throw new Error("Invalid tags");
     }
 
-    this.setState(s => ({ ...s, loading: false }));
+    clearTimeout(timeout);
     return {
       library,
       installed,
@@ -70,7 +73,8 @@ export class Main extends Component<
       tags,
       editing: null,
       selected: tagids,
-      search: filter
+      search: filter,
+      loading: false
     };
   };
 
