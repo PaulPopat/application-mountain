@@ -17,7 +17,7 @@ export class Main extends Component<
     open: number;
     tags: TagsList;
     editing: string | null;
-    selected: string | null;
+    selected: string[];
     loading: boolean;
   }
 > {
@@ -29,7 +29,7 @@ export class Main extends Component<
       open: -1,
       tags: [],
       editing: null,
-      selected: null,
+      selected: [],
       loading: true
     };
   }
@@ -67,7 +67,7 @@ export class Main extends Component<
       open: -1,
       tags,
       editing: null,
-      selected: null
+      selected: []
     };
   };
 
@@ -91,7 +91,10 @@ export class Main extends Component<
         <div className="body">
           <TagsView
             tags={this.state.tags}
-            selected={this.state.editing || this.state.selected}
+            selected={
+              (this.state.editing && [this.state.editing]) ||
+              this.state.selected
+            }
             onEditTag={async id => {
               const data = await this.refresh();
               this.setState({ ...data, editing: id });
@@ -109,11 +112,25 @@ export class Main extends Component<
             }}
             onSelectTag={async id => {
               const data = await this.refresh(id);
-              const selected = data.tags.find(t => t.id === id);
-              this.setState({
+              if (!id) {
+                this.setState(s => ({
+                  ...data,
+                  selected: []
+                }));
+                return;
+              }
+              if (this.state.selected.find(i => i === id)) {
+                this.setState(s => ({
+                  ...data,
+                  selected: [...s.selected, id]
+                }));
+                return;
+              }
+
+              this.setState(s => ({
                 ...data,
-                selected: (selected && selected.id) || null
-              });
+                selected: s.selected.filter(i => i !== id)
+              }));
             }}
             editing={this.state.editing != null}
           />

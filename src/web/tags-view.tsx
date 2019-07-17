@@ -8,7 +8,7 @@ import { build_classes } from "../util/html_utils";
 
 type TagsViewProps = {
   tags: TagsList;
-  selected: string | null;
+  selected: string[];
   editing: boolean;
   onAddTag: (name: string) => void;
   onSelectTag: (id: string | null) => void;
@@ -71,7 +71,7 @@ export class TagsView extends Component<
               <div
                 className={build_classes({
                   "tag-item": true,
-                  selected: this.props.selected === t.id
+                  selected: this.props.selected.find(i => i === t.id) != null
                 })}
                 key={t.id}
               >
@@ -86,7 +86,8 @@ export class TagsView extends Component<
                       className={build_classes({
                         "edit-button": true,
                         editing:
-                          this.props.editing && this.props.selected === t.id
+                          this.props.editing &&
+                          this.props.selected.find(i => i === t.id) != null
                       })}
                       onClick={_ => this.props.onEditTag(t.id)}
                     >
