@@ -5,7 +5,7 @@ import { IsArray, IsNumber, IsString } from "../util/type";
 export type State = {
   library: AppList;
   installed: number[];
-  open: number;
+  deleting: boolean;
   tags: TagsList;
   editing: string | null;
   selected: string[];
@@ -16,7 +16,7 @@ export type State = {
 export const initial_state: Readonly<State> = {
   library: [],
   installed: [],
-  open: -1,
+  deleting: false,
   tags: [],
   editing: null,
   selected: [],
@@ -24,20 +24,15 @@ export const initial_state: Readonly<State> = {
   search: ""
 };
 
-export default function(
-  state: State,
-  setState: (a: ((s: State) => State) | State) => void
-) {
+type SetStateArg = ((s: State) => State) | State;
+type SetState = (a: SetStateArg) => void;
+
+export default function(getState: () => State, setState: SetState) {
   async function refresh(
     tagids: string[],
     filter: string,
     force: boolean = false
   ) {
-    const timeout = setTimeout(
-      () => setState(s => ({ ...s, loading: true })),
-      100
-    );
-
     const library = await query("/", {
       tags: tagids,
       filter,
@@ -57,11 +52,10 @@ export default function(
       throw new Error("Invalid tags");
     }
 
-    clearTimeout(timeout);
     return {
       library,
       installed,
-      open: -1,
+      deleting: false,
       tags,
       editing: null,
       selected: tagids,
@@ -72,13 +66,19 @@ export default function(
 
   return {
     async refresh(force: boolean = false) {
+      const state = getState();
       setState(await refresh(state.selected, state.search, force));
     },
     async delete_tag() {
+      setState(s => ({ ...s, deleting: true }));
+    },
+    async confirm_delete_tag() {
+      const state = getState();
       await query("/tags/remove", state.selected[0]);
       setState(await refresh([], state.search));
     },
     async edit_tag(id: string) {
+      const state = getState();
       setState({
         ...(await refresh([], state.search)),
         editing: id
@@ -106,9 +106,11 @@ export default function(
       }));
     },
     async search(filter: string) {
+      const state = getState();
       setState(await refresh(state.selected, filter));
     },
     async select_tag(id: string | null) {
+      const state = getState();
       if (!id) {
         setState(await refresh([], state.search));
         return;
@@ -123,6 +125,7 @@ export default function(
       );
     },
     async select_game(appid: number) {
+      const state = getState();
       if (state.editing) {
         const tag = state.tags.find(t => t.id === state.editing);
         if (!tag) {
@@ -164,14 +167,14 @@ export default function(
           }));
         }
       } else {
-        setState(s => ({ ...s, open: appid }));
+        send("/app/open", appid);
       }
     },
     done_editing() {
       setState(s => ({ ...s, editing: null }));
     },
-    hide_modal() {
-      setState(s => ({ ...s, open: -1 }));
+    stop_deleting() {
+      setState(s => ({ ...s, deleting: false }));
     }
   };
 }
