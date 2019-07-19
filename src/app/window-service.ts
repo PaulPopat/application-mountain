@@ -3,19 +3,19 @@ import environment from "../util/environment";
 import { autoUpdater } from "electron-updater";
 import { add_coms } from "./coms-service";
 import { messagingService } from "./server-messaging";
-import path from "path";
 
 let windows: BrowserWindow[] = [];
-export async function createWindow(
+export function create_window(
   width: number,
   height: number,
-  htmlPath: string
+  ...params: string[]
 ) {
   const window = new BrowserWindow({
     width,
     height,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      additionalArguments: params
     },
     frame: false
   });
@@ -25,10 +25,10 @@ export async function createWindow(
   windows = [...windows, window];
 
   if (environment.is_dev) {
-    window.loadFile(path.join("..", htmlPath));
+    window.loadFile("../index.html");
     window.webContents.openDevTools();
   } else {
-    window.loadFile(htmlPath);
+    window.loadFile("index.html");
   }
 
   window.on("closed", () => {
@@ -40,6 +40,8 @@ export async function createWindow(
   if (!environment.is_dev) {
     autoUpdater.checkForUpdatesAndNotify();
   }
+
+  return window;
 }
 
 export function areWindows() {

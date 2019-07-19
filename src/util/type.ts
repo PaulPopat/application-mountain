@@ -52,10 +52,10 @@ export function IsArray<T>(checker: Checker<T>): Checker<T[]> {
     return !arg.find((a, i) => {
       const result = checker(a);
       if (!result) {
+        const json = JSON.stringify(a);
         warn(
-          `Element ${i} of array was the wrong type; value was "${JSON.stringify(
-            a
-          ).substr(0, 80)}"`
+          `Element ${i} of array was the wrong type; value was "${json &&
+            json.substr(0, 80)}"`
         );
 
         return true;
@@ -104,11 +104,10 @@ export function IsObject<T extends CheckerObject>(
       }
 
       if (!checker[key](arg[key])) {
+        const json = JSON.stringify(arg[key]);
         warn(
-          `Failed type check, value "${JSON.stringify(arg[key]).substr(
-            0,
-            80
-          )}" of ${key} was not the correct type.`
+          `Failed type check, value "${json &&
+            json.substr(0, 80)}" of ${key} was not the correct type.`
         );
         return false;
       }

@@ -12,6 +12,10 @@ export function messagingService(window: BrowserWindow) {
       handler: (arg: unknown, window: BrowserWindow) => Promise<unknown>
     ) => {
       ipcMain.on(message, async (e: Event, a: unknown) => {
+        if (e.sender.id !== window.webContents.id) {
+          return;
+        }
+
         try {
           window.webContents.send(message, await handler(a, window));
         } catch {}

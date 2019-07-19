@@ -1,9 +1,14 @@
 import "@babel/polyfill";
 import "./app/handlers/index";
 import { app } from "electron";
-import { areWindows, createWindow } from "./app/window-service";
+import { areWindows, create_window } from "./app/window-service";
 
-app.on("ready", () => createWindow(1300, 920, "index.html"));
+app.on("ready", () => {
+  const window = create_window(1300, 920, "index.html");
+  window.on("closed", () => {
+    app.quit();
+  });
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -13,6 +18,9 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (!areWindows()) {
-    createWindow(1300, 920, "index.html");
+    const window = create_window(1300, 920, "index.html");
+    window.on("closed", () => {
+      app.quit();
+    });
   }
 });

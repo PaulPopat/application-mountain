@@ -14,29 +14,55 @@ class Transition extends Component<
   TransitionProps,
   { state: TransitionState | "fully-hidden" }
 > {
+  public constructor(props: TransitionProps, context: any) {
+    super(props, context);
+    this.state = {
+      state: props.show ? "hidden" : "fully-hidden"
+    };
+  }
+
+  private timeouts: any[] = [];
   private trigger() {
     if (this.props.show) {
-      setTimeout(() => {
+      const t1 = setTimeout(() => {
         this.setState({ state: "hidden" });
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
           this.setState({ state: "showing" });
-          setTimeout(() => {
+          const t3 = setTimeout(() => {
             this.setState({ state: "shown" });
             this.props.finished && this.props.finished(true);
+            clearTimeout(t3);
+            this.timeouts = this.timeouts.filter(t => t !== t3);
           }, this.props.timeout);
+          this.timeouts.push(t3);
+          clearTimeout(t2);
+          this.timeouts = this.timeouts.filter(t => t !== t2);
         }, this.props.timeout);
+        this.timeouts.push(t2);
+        clearTimeout(t1);
+        this.timeouts = this.timeouts.filter(t => t !== t1);
       }, 1);
+      this.timeouts.push(t1);
     } else {
-      setTimeout(() => {
+      const t1 = setTimeout(() => {
         this.setState({ state: "hiding" });
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
           this.setState({ state: "hidden" });
-          setTimeout(() => {
+          const t3 = setTimeout(() => {
             this.setState({ state: "fully-hidden" });
             this.props.finished && this.props.finished(false);
+            clearTimeout(t3);
+            this.timeouts = this.timeouts.filter(t => t !== t3);
           }, 1);
+          this.timeouts.push(t3);
+          clearTimeout(t2);
+          this.timeouts = this.timeouts.filter(t => t !== t2);
         }, this.props.timeout);
+        this.timeouts.push(t2);
+        clearTimeout(t1);
+        this.timeouts = this.timeouts.filter(t => t !== t1);
       }, this.props.timeout);
+      this.timeouts.push(t1);
     }
   }
 
@@ -52,8 +78,14 @@ class Transition extends Component<
     this.trigger();
   }
 
+  public componentWillUnmount() {
+    for (const timeout of this.timeouts) {
+      clearTimeout(timeout);
+    }
+  }
+
   public render() {
-    if (!this.state || this.state.state === "fully-hidden") {
+    if (this.state.state === "fully-hidden") {
       return <></>;
     }
 

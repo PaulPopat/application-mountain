@@ -1,8 +1,8 @@
 import React, { SFC } from "react";
 import { Button, Heading, Buttons } from "./widgets/atoms";
 import { send } from "./web-messaging";
-import { Close } from "./widgets/icons";
 import { debounce } from "../util/debounce";
+import { CloseButton } from "./widgets/input-field";
 
 export const Header: SFC<{
   onRefresh: () => void;
@@ -43,11 +43,7 @@ export const Header: SFC<{
         />
       </div>
 
-      <div className="window-actions">
-        <div className="close-button" onClick={() => send("window/close")}>
-          <Close fill="#ddd" width="100%" height="100%" />
-        </div>
-      </div>
+      <CloseButton fill="#ddd" />
     </div>
   );
 };

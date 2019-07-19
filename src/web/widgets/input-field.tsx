@@ -1,5 +1,7 @@
-import React, { Component, createRef } from "react";
+import React, { Component, SFC, createRef } from "react";
 import { Button } from "./atoms";
+import { Close } from "./icons";
+import { send } from "../web-messaging";
 
 export class InputField extends Component<{
   onSubmit: (value: string) => void;
@@ -51,3 +53,14 @@ export class InputField extends Component<{
     );
   }
 }
+
+export const CloseButton: SFC<{
+  children?: never[] | null;
+  fill: string;
+}> = p => (
+  <div className="window-actions">
+    <div className="close-button" onClick={() => send("window/close")}>
+      <Close fill={p.fill} width="100%" height="100%" />
+    </div>
+  </div>
+);

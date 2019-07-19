@@ -2,6 +2,7 @@
 @import "./animation";
 @import "./library";
 @import "./tags-list";
+@import "./app-details";
 
 body,
 html {
@@ -56,6 +57,12 @@ html {
     margin-left: 20px;
     color: inherit;
     user-select: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 0;
+    margin-right: 20px;
+    max-width: 80%;
+    overflow: hidden;
   }
 
   .button {
@@ -154,4 +161,25 @@ html {
       }
     }
   }
+}
+
+.carousel {
+  position: relative;
+  border-bottom: 2px solid #333;
+
+  .fade {
+    font-size: 0;
+
+    &:not(:first-child) {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.shadow-scroll {
+  box-shadow: inset 0px 0px 75px 0px rgba(0, 0, 0, 0.62);
 }

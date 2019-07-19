@@ -5,7 +5,6 @@ import { Modal } from "./widgets/modal";
 import { Header } from "./header";
 import { TagsView } from "./tags-view";
 import Store, { State, initial_state } from "./store";
-import { build_classes } from "../util/html_utils";
 
 export class Main extends Component<{ children?: null | never }, State> {
   private readonly store: ReturnType<typeof Store>;

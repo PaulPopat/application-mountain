@@ -10,6 +10,9 @@ export const Loading: SFC<{
   fill?: string;
 }> = p => (
   <>
+    <Fade show={!p.loading} fill overlay>
+      {p.children}
+    </Fade>
     <Fade show={p.loading} fill overlay>
       <div
         className="loading-container fill"
@@ -21,9 +24,6 @@ export const Loading: SFC<{
           height="200px"
         />
       </div>
-    </Fade>
-    <Fade show={!p.loading} fill overlay>
-      {p.children}
     </Fade>
   </>
 );
@@ -56,6 +56,7 @@ export const Heading: SFC<{
   subtitle?: boolean;
   level: "1" | "2" | "3" | "4" | "5" | "6";
   spaced?: boolean;
+  title?: string;
 }> = p => (
   <p
     className={build_classes({
@@ -64,6 +65,7 @@ export const Heading: SFC<{
       [`is-${p.level}`]: true,
       "is-spaced": p.spaced
     })}
+    title={p.title}
   >
     {p.children}
   </p>
