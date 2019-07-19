@@ -1,0 +1,42 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 32 32"
+  width="512"
+  height="512"
+>
+  <path
+    fill="#154690"
+    d="
+        INPUT_HERE
+    "
+  />
+
+  <path
+    fill="#0079c2"
+    d="
+        INPUT_HERE
+    "
+  />
+
+  <path
+    fill="#00a8bb"
+    d="
+        INPUT_HERE
+    "
+  />
+
+  <path
+    fill="#00d07d"
+    d="
+        INPUT_HERE
+    "
+  />
+
+  <path
+    fill="#a8eb12"
+    d="
+        INPUT_HERE
+    "
+  />
+</svg>
