@@ -21,7 +21,7 @@
     "build:bundle": "browserify lib/index.js -o lib/bundle.js",
     "start": "electron .",
     "package": "npm run build && electron-builder --win --x64",
-    "public": "npm run build && electron-builder --win --x64 --publish",
+    "publish": "npm run build && electron-builder --win --x64 --publish",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {

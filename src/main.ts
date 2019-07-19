@@ -34,7 +34,9 @@ async function createWindow() {
 
   set_coms(messagingService(window));
 
-  autoUpdater.checkForUpdatesAndNotify();
+  if (!environment.is_dev) {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 }
 
 app.on("ready", createWindow);
