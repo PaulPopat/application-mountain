@@ -1,3 +1,3 @@
-import "./app-start";
-import "./app-info";
+import "./start";
+import "./app";
 import "./tags";

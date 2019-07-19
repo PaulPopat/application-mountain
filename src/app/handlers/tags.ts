@@ -1,4 +1,4 @@
-import { get_coms } from "../coms-provider";
+import { handle } from "../coms-service";
 import {
   get_tags,
   add_tag,
@@ -8,52 +8,49 @@ import {
 } from "../providers/tags-provider";
 import { IsString, IsNumber, IsObject } from "../../util/type";
 
-(async () => {
-  const coms = await get_coms();
-  coms.handle("load-tags", async _ => {
-    const result = await get_tags();
-    return result.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-
-      if (a.name > b.name) {
-        return 1;
-      }
-
-      return 0;
-    });
-  });
-
-  coms.handle("add-tag", async name => {
-    if (!IsString(name)) {
-      throw new Error("Invalid tag name");
+handle("/tags", async _ => {
+  const result = await get_tags();
+  return result.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
     }
 
-    return await add_tag(name);
-  });
-
-  coms.handle("remove-tag", async id => {
-    if (!IsString(id)) {
-      throw new Error("Invalid tag name");
+    if (a.name > b.name) {
+      return 1;
     }
 
-    return await remove_tag(id);
+    return 0;
   });
+});
 
-  coms.handle("add-app", async info => {
-    if (!IsObject({ id: IsString, app: IsNumber })(info)) {
-      throw new Error("Invalid data");
-    }
+handle("/tags/add", async name => {
+  if (!IsString(name)) {
+    throw new Error("Invalid tag name");
+  }
 
-    await add_apps(info.id, [info.app]);
-  });
+  return await add_tag(name);
+});
 
-  coms.handle("remove-app", async info => {
-    if (!IsObject({ id: IsString, app: IsNumber })(info)) {
-      throw new Error("Invalid data");
-    }
+handle("/tags/remove", async id => {
+  if (!IsString(id)) {
+    throw new Error("Invalid tag name");
+  }
 
-    await remove_app(info.id, info.app);
-  });
-})();
+  return await remove_tag(id);
+});
+
+handle("/tags/tag/add", async info => {
+  if (!IsObject({ id: IsString, app: IsNumber })(info)) {
+    throw new Error("Invalid data");
+  }
+
+  await add_apps(info.id, [info.app]);
+});
+
+handle("/tags/tag/remove", async info => {
+  if (!IsObject({ id: IsString, app: IsNumber })(info)) {
+    throw new Error("Invalid data");
+  }
+
+  await remove_app(info.id, info.app);
+});

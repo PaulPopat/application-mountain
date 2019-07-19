@@ -18,7 +18,7 @@ export const AppDetails: SFC<{
   const [editing, set_editing] = useState(false);
   const d = details.info[p.appid];
   const refresh = async () => {
-    const de = await query("app-info", p.appid);
+    const de = await query("/app/info", p.appid);
     if (!IsObject({ info: IsGameInfo, tags: IsTagsList })(de)) {
       throw new Error("Invalid app info from server");
     }
@@ -39,7 +39,7 @@ export const AppDetails: SFC<{
               <Heading level="1">{d.data.name}</Heading>
               <Field>
                 <Button
-                  onClick={() => send("start-app", p.appid)}
+                  onClick={() => send("/app/start", p.appid)}
                   type="primary"
                   rounded
                 >
@@ -63,7 +63,7 @@ export const AppDetails: SFC<{
                           <Tag rounded>{t.name}</Tag>
                           <Tag
                             onClick={async () => {
-                              await query("remove-app", {
+                              await query("/tags/tag/remove", {
                                 id: t.id,
                                 app: p.appid
                               });
@@ -92,7 +92,7 @@ export const AppDetails: SFC<{
                           key={t.id}
                           colour="link"
                           onClick={async () => {
-                            await query("add-app", {
+                            await query("/tags/tag/add", {
                               id: t.id,
                               app: p.appid
                             });

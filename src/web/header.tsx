@@ -14,7 +14,7 @@ export const Header: SFC<{
   return (
     <div className="header">
       <Buttons>
-        <Button type="link" onClick={() => send("open-store")}>
+        <Button type="link" onClick={() => send("/store")}>
           Open Steam Store
         </Button>
         <Button type="info" onClick={p.onRefresh}>
@@ -44,7 +44,7 @@ export const Header: SFC<{
       </div>
 
       <div className="window-actions">
-        <div className="close-button" onClick={() => send("close-window")}>
+        <div className="close-button" onClick={() => send("window/close")}>
           <Close fill="#ddd" width="100%" height="100%" />
         </div>
       </div>

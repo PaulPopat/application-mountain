@@ -1,42 +1,21 @@
-import { BrowserWindow, ipcMain, Event, dialog } from "electron";
+import { BrowserWindow, ipcMain, Event } from "electron";
 
-export type MessagingService = {
-  handle(message: string, handler: (arg: unknown) => Promise<unknown>): void;
-  wait(message: string): Promise<unknown>;
-  query(message: string, arg?: any): Promise<unknown>;
-  send(message: string, arg?: any): void;
-  readonly window: BrowserWindow;
-};
+export type MessageHandler = (
+  arg: unknown,
+  window: BrowserWindow
+) => Promise<unknown>;
 
-export function messagingService(window: BrowserWindow): MessagingService {
+export function messagingService(window: BrowserWindow) {
   return {
-    handle: (message: string, handler: (arg: unknown) => Promise<unknown>) => {
+    handle: (
+      message: string,
+      handler: (arg: unknown, window: BrowserWindow) => Promise<unknown>
+    ) => {
       ipcMain.on(message, async (e: Event, a: unknown) => {
         try {
-          window.webContents.send(message, await handler(a));
+          window.webContents.send(message, await handler(a, window));
         } catch {}
       });
-    },
-    wait: (message: string) => {
-      return new Promise<unknown>((res, rej) => {
-        ipcMain.once(message, (e: Event, a: unknown) => {
-          res(a);
-        });
-      });
-    },
-    query: (message: string, arg?: any) => {
-      window.webContents.send(message, arg);
-      return new Promise<unknown>((res, rej) => {
-        ipcMain.once(message, (e: Event, a: unknown) => {
-          res(a);
-        });
-      });
-    },
-    send: (message: string, arg?: any) => {
-      window.webContents.send(message, arg);
-    },
-    get window() {
-      return window;
     }
   };
 }

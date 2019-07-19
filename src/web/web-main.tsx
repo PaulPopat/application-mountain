@@ -45,22 +45,30 @@ export class Main extends Component<
     return tag;
   };
 
-  private readonly refresh = async (tagids: string[], filter: string) => {
+  private readonly refresh = async (
+    tagids: string[],
+    filter: string,
+    force: boolean = false
+  ) => {
     const timeout = setTimeout(
       () => this.setState(s => ({ ...s, loading: true })),
       100
     );
-    const library = await query("load-data", { tags: tagids, filter });
+    const library = await query("/", {
+      tags: tagids,
+      filter,
+      force
+    });
     if (!IsAppList(library)) {
       throw new Error("Invalid library");
     }
 
-    const installed = await query("installed-apps");
+    const installed = await query("/apps/installed");
     if (!IsArray(IsNumber)(installed)) {
       throw new Error("Invalid installed apps");
     }
 
-    const tags = await query("load-tags");
+    const tags = await query("/tags");
     if (!IsTagsList(tags)) {
       throw new Error("Invalid tags");
     }
@@ -88,12 +96,12 @@ export class Main extends Component<
         <Header
           onRefresh={async () =>
             this.setState(
-              await this.refresh(this.state.selected, this.state.search)
+              await this.refresh(this.state.selected, this.state.search, true)
             )
           }
           canDeleteTag={this.state.selected.length !== 1}
           onDeleteTag={async () => {
-            await query("remove-tag", this.state.selected[0]);
+            await query("/tags/remove", this.state.selected[0]);
             this.setState(await this.refresh([], this.state.search));
           }}
           onSearch={async filter =>
@@ -114,7 +122,7 @@ export class Main extends Component<
               });
             }}
             onAddTag={async name => {
-              const id = await query("add-tag", name);
+              const id = await query("/tags/add", name);
               if (!IsString(id)) {
                 throw new Error("Id is of wrong type");
               }
@@ -177,7 +185,7 @@ export class Main extends Component<
                     }
 
                     if (tag.apps.find(a => a === appid)) {
-                      await send("remove-app", {
+                      await send("/tags/tag/remove", {
                         id: this.state.editing,
                         app: appid
                       });
@@ -195,7 +203,7 @@ export class Main extends Component<
                         })
                       }));
                     } else {
-                      await send("add-app", {
+                      await send("/tags/tag/add", {
                         id: this.state.editing,
                         app: appid
                       });
