@@ -27,6 +27,7 @@ Release after:
 - Improve refresh after buying games
 - Add last played date
 - Add total played time
+- Add support for multiple accounts on one machine
 
 Possible in the future:
 - Friends and chat (this is not a priority as Discord exists)
