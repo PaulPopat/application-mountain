@@ -1,39 +1,16 @@
 import React, { Component } from "react";
 import { LibraryViewer } from "./library-viewer";
-import { query, send } from "./web-messaging";
-import { AppList, IsAppList, TagsList, IsTagsList } from "../util/types";
-import { IsArray, IsNumber, IsString } from "../util/type";
 import { Loading, Button } from "./widgets/atoms";
 import { Modal } from "./widgets/modal";
 import { AppDetails } from "./app-details";
 import { Header } from "./header";
 import { TagsView } from "./tags-view";
+import Store, { State, initial_state } from "./store";
 
-export class Main extends Component<
-  { children?: null | never },
-  {
-    library: AppList;
-    installed: number[];
-    open: number;
-    tags: TagsList;
-    editing: string | null;
-    selected: string[];
-    loading: boolean;
-    search: string;
-  }
-> {
+export class Main extends Component<{ children?: null | never }, State> {
   public constructor(props: any, context: any) {
     super(props, context);
-    this.state = {
-      library: [],
-      installed: [],
-      open: -1,
-      tags: [],
-      editing: null,
-      selected: [],
-      loading: true,
-      search: ""
-    };
+    this.state = initial_state;
   }
 
   private readonly get_tag = (tagid: string) => {
@@ -45,68 +22,20 @@ export class Main extends Component<
     return tag;
   };
 
-  private readonly refresh = async (
-    tagids: string[],
-    filter: string,
-    force: boolean = false
-  ) => {
-    const timeout = setTimeout(
-      () => this.setState(s => ({ ...s, loading: true })),
-      100
-    );
-    const library = await query("/", {
-      tags: tagids,
-      filter,
-      force
-    });
-    if (!IsAppList(library)) {
-      throw new Error("Invalid library");
-    }
-
-    const installed = await query("/apps/installed");
-    if (!IsArray(IsNumber)(installed)) {
-      throw new Error("Invalid installed apps");
-    }
-
-    const tags = await query("/tags");
-    if (!IsTagsList(tags)) {
-      throw new Error("Invalid tags");
-    }
-
-    clearTimeout(timeout);
-    return {
-      library,
-      installed,
-      open: -1,
-      tags,
-      editing: null,
-      selected: tagids,
-      search: filter,
-      loading: false
-    };
-  };
-
   public async componentDidMount() {
-    this.setState(await this.refresh(this.state.selected, this.state.search));
+    const store = Store(this.state, this.setState);
+    await store.refresh(false);
   }
 
   public render() {
+    const store = Store(this.state, this.setState);
     return (
       <div className="app">
         <Header
-          onRefresh={async () =>
-            this.setState(
-              await this.refresh(this.state.selected, this.state.search, true)
-            )
-          }
+          onRefresh={async () => await store.refresh(true)}
           canDeleteTag={this.state.selected.length !== 1}
-          onDeleteTag={async () => {
-            await query("/tags/remove", this.state.selected[0]);
-            this.setState(await this.refresh([], this.state.search));
-          }}
-          onSearch={async filter =>
-            this.setState(await this.refresh(this.state.selected, filter))
-          }
+          onDeleteTag={store.delete_tag}
+          onSearch={store.search}
         />
         <div className="body">
           <TagsView
@@ -115,55 +44,9 @@ export class Main extends Component<
               (this.state.editing && [this.state.editing]) ||
               this.state.selected
             }
-            onEditTag={async id => {
-              this.setState({
-                ...(await this.refresh([], this.state.search)),
-                editing: id
-              });
-            }}
-            onAddTag={async name => {
-              const id = await query("/tags/add", name);
-              if (!IsString(id)) {
-                throw new Error("Id is of wrong type");
-              }
-
-              this.setState(s => ({
-                ...s,
-                tags: [...s.tags, { name, id, apps: [] }].sort((a, b) => {
-                  if (a.name < b.name) {
-                    return -1;
-                  }
-
-                  if (a.name > b.name) {
-                    return 1;
-                  }
-
-                  return 0;
-                })
-              }));
-            }}
-            onSelectTag={async id => {
-              if (!id) {
-                this.setState(await this.refresh([], this.state.search));
-                return;
-              }
-              if (!this.state.selected.find(i => i === id)) {
-                this.setState(
-                  await this.refresh(
-                    [...this.state.selected, id],
-                    this.state.search
-                  )
-                );
-                return;
-              }
-
-              this.setState(
-                await this.refresh(
-                  this.state.selected.filter(i => i !== id),
-                  this.state.search
-                )
-              );
-            }}
+            onEditTag={store.edit_tag}
+            onAddTag={store.add_tag}
+            onSelectTag={store.select_tag}
             editing={this.state.editing != null}
           />
           <div className="library-view">
@@ -175,72 +58,19 @@ export class Main extends Component<
                     ? this.get_tag(this.state.editing).apps
                     : this.state.installed
                 }
-                onSelect={async appid => {
-                  if (this.state.editing) {
-                    const tag = this.state.tags.find(
-                      t => t.id === this.state.editing
-                    );
-                    if (!tag) {
-                      throw new Error("Could not find tag");
-                    }
-
-                    if (tag.apps.find(a => a === appid)) {
-                      await send("/tags/tag/remove", {
-                        id: this.state.editing,
-                        app: appid
-                      });
-                      this.setState(s => ({
-                        ...s,
-                        tags: this.state.tags.map(t => {
-                          if (t.id !== this.state.editing) {
-                            return t;
-                          }
-
-                          return {
-                            ...t,
-                            apps: t.apps.filter(a => a !== appid)
-                          };
-                        })
-                      }));
-                    } else {
-                      await send("/tags/tag/add", {
-                        id: this.state.editing,
-                        app: appid
-                      });
-                      this.setState(s => ({
-                        ...s,
-                        tags: this.state.tags.map(t => {
-                          if (t.id !== this.state.editing) {
-                            return t;
-                          }
-
-                          return { ...t, apps: [...t.apps, appid] };
-                        })
-                      }));
-                    }
-                  } else {
-                    this.setState(s => ({ ...s, open: appid }));
-                  }
-                }}
+                onSelect={store.select_game}
               />
             </Loading>
 
             {this.state.editing && (
               <div className="done-button">
-                <Button
-                  type="success"
-                  rounded
-                  onClick={() => this.setState(s => ({ ...s, editing: null }))}
-                >
+                <Button type="success" rounded onClick={store.done_editing}>
                   Done
                 </Button>
               </div>
             )}
 
-            <Modal
-              show={this.state.open !== -1}
-              onHide={() => this.setState(s => ({ ...s, open: -1 }))}
-            >
+            <Modal show={this.state.open !== -1} onHide={store.hide_modal}>
               {this.state.open !== -1 && (
                 <AppDetails
                   appid={this.state.open}

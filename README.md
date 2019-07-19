@@ -18,7 +18,7 @@ Last Release:
 Next release:
 
 - Move the app details into a separate window
-- Move the app state to a state manager
+- Move the app state to a state manager ✓
 - Make the coms not rely on an async starter ✓
 - Add a confirmation popup for deleting tags
 - Move the edit button onto the header
