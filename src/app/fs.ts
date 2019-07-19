@@ -15,8 +15,8 @@ type Encoding =
   | "latin1";
 
 const dirname = environment.is_dev
-  ? "steam-library-manager"
-  : "Steam Library Manager";
+  ? "application-mountain"
+  : "Application Mountain";
 
 const steamAppPathPath = path.join(
   app.getPath("appData"),

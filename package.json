@@ -1,17 +1,17 @@
 {
-  "name": "steam-library-manager",
-  "version": "1.0.0",
+  "name": "application-mountain",
+  "version": "1.0.2",
   "description": "A simple to catagorise steam libraries",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PaulPopat/steam-library-manager.git"
+    "url": "git+https://github.com/PaulPopat/application-mountain.git"
   },
   "author": "Paul Popat",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/PaulPopat/steam-library-manager/issues"
+    "url": "https://github.com/PaulPopat/application-mountain/issues"
   },
-  "homepage": "https://github.com/PaulPopat/steam-library-manager#readme",
+  "homepage": "https://github.com/PaulPopat/application-mountain#readme",
   "main": "lib/main.js",
   "scripts": {
     "build": "npm run build:types && npm run build:js && npm run build:css && npm run build:bundle",
@@ -20,7 +20,9 @@
     "build:css": "node-sass style/index.scss lib/index.css",
     "build:bundle": "browserify lib/index.js -o lib/bundle.js",
     "start": "electron .",
-    "package": "npm run build && electron-packager ./ \"Steam Library Manager\" --platform=win32 --arch=x64 --icon=Icon.ico"
+    "package": "npm run build && electron-builder --win --x64",
+    "public": "npm run build && electron-builder --win --x64 --publish",
+    "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -35,7 +37,7 @@
     "browserify": "^16.3.0",
     "bulma": "^0.7.5",
     "electron": "^5.0.6",
-    "electron-packager": "^14.0.1",
+    "electron-builder": "^21.1.1",
     "node-sass": "^4.12.0",
     "typescript": "^3.3.3"
   },
@@ -46,9 +48,17 @@
     "@types/react-dom": "^16.8.4",
     "@types/uuid": "^3.4.5",
     "axios": "^0.19.0",
+    "electron-updater": "^4.1.2",
     "react": "^16.8.6",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.8.6",
     "uuid": "^3.3.2"
+  },
+  "build": {
+    "appId": "paul-popat.application-mountain.app",
+    "productName": "Application Mountain",
+    "win": {
+      "publish": "github"
+    }
   }
 }

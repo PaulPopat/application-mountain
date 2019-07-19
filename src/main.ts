@@ -1,5 +1,6 @@
 import "@babel/polyfill";
 import "./app/handlers/index";
+import { autoUpdater } from "electron-updater";
 import { app, BrowserWindow } from "electron";
 import { messagingService } from "./app/server-messaging";
 import { set_coms } from "./app/coms-provider";
@@ -32,6 +33,8 @@ async function createWindow() {
   });
 
   set_coms(messagingService(window));
+
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 app.on("ready", createWindow);

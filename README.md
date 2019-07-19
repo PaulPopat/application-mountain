@@ -1,4 +1,4 @@
-# Steam Library Manager
+# Application Mountain
 
 This tool is a way to manage your steam library.
 You can tag apps and then filter by multiple tags and do text search.
