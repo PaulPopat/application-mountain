@@ -222,3 +222,29 @@ export const Dropdown: SFC<
     </div>
   );
 };
+
+export const CardFooterItem: SFC<{ onClick: () => void }> = p => (
+  <a href="#" onClick={p.onClick} className="card-footer-item">
+    {p.children}
+  </a>
+);
+
+export const Card: SFC<{
+  children: {
+    header: React.ReactNode;
+    content: React.ReactNode;
+    footer?: React.ReactNode;
+  };
+}> = p => (
+  <div className="card">
+    <header className="card-header">
+      <p className="card-header-title">{p.children.header}</p>
+    </header>
+    <div className="card-content">
+      <div className="content">{p.children.content}</div>
+    </div>
+    {p.children.footer && (
+      <footer className="card-footer">{p.children.footer}</footer>
+    )}
+  </div>
+);

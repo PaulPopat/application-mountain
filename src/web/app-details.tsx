@@ -1,11 +1,28 @@
 import React, { SFC, useState } from "react";
 import { GameInfo, IsGameInfo, IsTagsList, TagsList } from "../util/types";
 import { query, send } from "./web-messaging";
-import { Loading, Heading, Button, Field, Tags, Tag } from "./widgets/atoms";
+import {
+  Loading,
+  Heading,
+  Button,
+  Field,
+  Tags,
+  Tag,
+  Columns,
+  Buttons,
+  Card,
+  CardFooterItem
+} from "./widgets/atoms";
 import Scrollbars from "react-custom-scrollbars";
-import { IsObject, IsBoolean } from "../util/type";
+import { IsObject, IsBoolean, IsNumber, Optional } from "../util/type";
 import { CloseButton } from "./widgets/input-field";
 import { Carousel } from "./widgets/carousel";
+
+function get_date(seconds: number) {
+  const date = new Date(0);
+  date.setUTCSeconds(seconds);
+  return date;
+}
 
 export const AppDetails: SFC<{
   children?: null | never;
@@ -16,12 +33,14 @@ export const AppDetails: SFC<{
     tags: TagsList;
     allTags: TagsList;
     installed: boolean;
+    lastPlayed: number | null | undefined;
     loading: boolean;
   }>({
     info: {},
     tags: [],
     allTags: [],
     installed: false,
+    lastPlayed: null,
     loading: true
   });
 
@@ -34,7 +53,8 @@ export const AppDetails: SFC<{
         info: IsGameInfo,
         tags: IsTagsList,
         allTags: IsTagsList,
-        installed: IsBoolean
+        installed: IsBoolean,
+        lastPlayed: Optional(IsNumber)
       })(de)
     ) {
       throw new Error("Invalid app info from server");
@@ -67,7 +87,7 @@ export const AppDetails: SFC<{
                 interval={4000}
               />
               <div className="content-container">
-                <Field>
+                <div className="install-and-last-played">
                   <Button
                     onClick={() => send("/app/start", p.appid)}
                     type="primary"
@@ -75,7 +95,15 @@ export const AppDetails: SFC<{
                   >
                     {details.installed ? "Play Game" : "Install"}
                   </Button>
-                </Field>
+                  {details.lastPlayed && (
+                    <div className="last-played">
+                      <Heading level="5" subtitle>
+                        Last Opened:
+                      </Heading>
+                      <p>{get_date(details.lastPlayed).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                </div>
                 <Field>
                   <p
                     dangerouslySetInnerHTML={{
@@ -83,96 +111,103 @@ export const AppDetails: SFC<{
                     }}
                   />
                 </Field>
-                {details.tags.length > 0 && (
-                  <>
-                    <Heading level="5" spaced>
-                      Tags
-                    </Heading>
-                    <Tags>
-                      {details.tags.map(t =>
-                        editing ? (
-                          <Tags key={t.id} has-addons>
-                            <Tag rounded>{t.name}</Tag>
-                            <Tag
-                              onClick={async () => {
-                                await query("/tags/tag/remove", {
-                                  id: t.id,
-                                  app: p.appid
-                                });
-                                refresh();
-                              }}
-                              rounded
-                              is-delete
-                            />
+                <Card>
+                  {{
+                    header: (
+                      <>
+                        Tags
+                        <Button
+                          type="success"
+                          size="small"
+                          rounded
+                          onClick={() => set_editing(!editing)}
+                        >
+                          {editing ? "Done" : "Edit"}
+                        </Button>
+                      </>
+                    ),
+                    content: (
+                      <>
+                        {details.tags.length > 0 ? (
+                          <Tags>
+                            {details.tags.map(t =>
+                              editing ? (
+                                <Tags key={t.id} has-addons>
+                                  <Tag rounded>{t.name}</Tag>
+                                  <Tag
+                                    onClick={async () => {
+                                      await query("/tags/tag/remove", {
+                                        id: t.id,
+                                        app: p.appid
+                                      });
+                                      refresh();
+                                    }}
+                                    rounded
+                                    is-delete
+                                  />
+                                </Tags>
+                              ) : (
+                                <Tag key={t.id} rounded>
+                                  {t.name}
+                                </Tag>
+                              )
+                            )}
                           </Tags>
                         ) : (
-                          <Tag key={t.id} rounded>
-                            {t.name}
-                          </Tag>
-                        )
-                      )}
-                    </Tags>
-                  </>
-                )}
-                {editing && (
-                  <Field>
-                    <Tags>
-                      {details.allTags
-                        .filter(t => !details.tags.find(t1 => t.id === t1.id))
-                        .map(t => (
-                          <Tag
-                            key={t.id}
-                            colour="link"
-                            onClick={async () => {
-                              await query("/tags/tag/add", {
-                                id: t.id,
-                                app: p.appid
-                              });
-                              refresh();
-                            }}
-                          >
-                            {t.name}
-                          </Tag>
-                        ))}
-                    </Tags>
-                  </Field>
-                )}
-                <Field>
-                  <Button
-                    onClick={() => set_editing(!editing)}
-                    type="info"
-                    size="small"
-                  >
-                    {editing ? "Stop Editing" : "Edit Tags"}
-                  </Button>
-                </Field>
-                {d.data.categories && d.data.categories.length > 0 && (
-                  <>
-                    <Heading level="5" spaced>
-                      Steam Categories
-                    </Heading>
-                    <Tags>
-                      {d.data.categories.map(c => (
-                        <Tag key={c.id} rounded>
-                          {c.description}
-                        </Tag>
-                      ))}
-                    </Tags>
-                  </>
-                )}
-                {d.data.genres && d.data.genres.length > 0 && (
-                  <>
-                    <Heading level="5" spaced>
-                      Steam Genres
-                    </Heading>
-                    <Tags>
-                      {d.data.genres.map(g => (
-                        <Tag key={g.id} rounded>
-                          {g.description}
-                        </Tag>
-                      ))}
-                    </Tags>
-                  </>
+                          <p>No tags yet. Why not add some?</p>
+                        )}
+                        {editing && (
+                          <Field>
+                            <Tags>
+                              {details.allTags
+                                .filter(
+                                  t => !details.tags.find(t1 => t.id === t1.id)
+                                )
+                                .map(t => (
+                                  <Tag
+                                    key={t.id}
+                                    colour="link"
+                                    onClick={async () => {
+                                      await query("/tags/tag/add", {
+                                        id: t.id,
+                                        app: p.appid
+                                      });
+                                      refresh();
+                                    }}
+                                  >
+                                    {t.name}
+                                  </Tag>
+                                ))}
+                            </Tags>
+                          </Field>
+                        )}
+                      </>
+                    )
+                  }}
+                </Card>
+                {((d.data.categories && d.data.categories.length > 0) ||
+                  (d.data.genres && d.data.genres.length > 0)) && (
+                  <Card>
+                    {{
+                      header: "Steam Categories",
+                      content: (
+                        <Tags>
+                          {d.data.categories &&
+                            d.data.categories.map(c => (
+                              <Tag key={c.id} rounded>
+                                {c.description}
+                              </Tag>
+                            ))}
+                          {d.data.genres &&
+                            d.data.genres.map(g => (
+                              <Tag key={g.id} rounded>
+                                {g.description}
+                              </Tag>
+                            ))}
+                        </Tags>
+                      )
+                    }}
+                  </Card>
                 )}
               </div>
             </Scrollbars>

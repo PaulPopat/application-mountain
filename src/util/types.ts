@@ -4,11 +4,13 @@ import {
   IsString,
   IsDictionary,
   Optional,
-  IsUnion,
+  IsDiscriminated,
   IsBoolean,
   IsLiteral,
   IsArray,
-  IsType
+  IsType,
+  IsUnion,
+  DoNotCare
 } from "./type";
 
 export const IsSharedConfig = IsObject({
@@ -34,7 +36,7 @@ export const IsSharedConfig = IsObject({
         })
       })
     }),
-    Web: IsDictionary(IsUnion(IsString, IsNumber)),
+    Web: IsDictionary(IsDiscriminated(IsString, IsNumber)),
     TradeInfoHint: IsNumber,
     controller_config: IsDictionary(
       IsObject({
@@ -55,9 +57,9 @@ export const IsGameInfo = IsDictionary(
         type: IsString,
         name: IsString,
         steam_appid: IsNumber,
-        required_age: IsUnion(IsString, IsNumber),
+        required_age: IsDiscriminated(IsString, IsNumber),
         is_free: IsBoolean,
-        controller_support: Optional(IsUnion(IsLiteral("full"))),
+        controller_support: Optional(IsDiscriminated(IsLiteral("full"))),
         dlc: Optional(IsArray(IsNumber)),
         detailed_description: IsString,
         about_the_game: IsString,
@@ -65,21 +67,21 @@ export const IsGameInfo = IsDictionary(
         supported_languages: IsString,
         header_image: IsString,
         website: Optional(IsString),
-        pc_requirements: IsUnion(
+        pc_requirements: IsDiscriminated(
           IsObject({
             minimum: Optional(IsString),
             recomended: Optional(IsString)
           }),
           IsArray(IsString)
         ),
-        mac_requirements: IsUnion(
+        mac_requirements: IsDiscriminated(
           IsObject({
             minimum: Optional(IsString),
             recomended: Optional(IsString)
           }),
           IsArray(IsString)
         ),
-        linux_requirements: IsUnion(
+        linux_requirements: IsDiscriminated(
           IsObject({
             minimum: Optional(IsString),
             recomended: Optional(IsString)
@@ -94,7 +96,7 @@ export const IsGameInfo = IsDictionary(
         ),
         price_overview: Optional(
           IsObject({
-            currency: IsUnion(IsLiteral("GBP")),
+            currency: IsDiscriminated(IsLiteral("GBP")),
             initial: IsNumber,
             final: IsNumber,
             discount_percent: IsNumber,
@@ -201,3 +203,59 @@ export const IsTagsList = IsArray(
 );
 
 export type TagsList = IsType<typeof IsTagsList>;
+
+export const IsLocalConfig = IsObject({
+  UserLocalConfigStore: IsObject({
+    streaming_v2: DoNotCare,
+    Broadcast: DoNotCare,
+    friends: DoNotCare,
+    apptickets: DoNotCare,
+    Offline: DoNotCare,
+    ParentalSettings: DoNotCare,
+    AppInfoChangeNumber: DoNotCare,
+    CloudKey: DoNotCare,
+    CloudKeyCRC: DoNotCare,
+    Software: IsObject({
+      valve: IsObject({
+        Steam: IsObject({
+          Apps: IsDictionary(
+            IsObject({
+              LastPlayed: IsNumber,
+              ViewedLaunchEULA: Optional(IsNumber),
+              BadgeData: Optional(IsString),
+              LaunchOptions: Optional(IsString),
+              DisableUpdatesUntil: Optional(IsString)
+            })
+          ),
+          LastPlayedTimesSyncTime: DoNotCare,
+          PlayerLevel: DoNotCare,
+          SSAVersion: DoNotCare,
+          ShaderCacheManager: DoNotCare
+        })
+      })
+    }),
+    HideSharingNotifications: DoNotCare,
+    system: DoNotCare,
+    News: DoNotCare,
+    LastInstallFolderIndex: DoNotCare,
+    depots: DoNotCare,
+    SkipLastInstallPage: DoNotCare,
+    "StartupState.Friends": DoNotCare,
+    controller_registration: DoNotCare,
+    controller_config: DoNotCare,
+    BigPicture: DoNotCare,
+    nettickets: DoNotCare,
+    Apps: DoNotCare,
+    SharedAuth: DoNotCare,
+    streaming: DoNotCare,
+    bigpictureweb: DoNotCare,
+    WebStorage: DoNotCare,
+    cache: DoNotCare,
+    UserAppConfig: DoNotCare,
+    SteamController_DisableTwoFootNotifications: DoNotCare,
+    ControllerTypesUsed: DoNotCare,
+    Licenses: DoNotCare
+  })
+});
+
+export type LocalConfig = IsType<typeof IsLocalConfig>;

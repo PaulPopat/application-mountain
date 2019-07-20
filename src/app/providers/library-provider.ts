@@ -1,5 +1,10 @@
 import { directory, is_directory, file } from "../fs";
-import { IsSharedConfig, IsSteamLibrary, IsGameInfo } from "../../util/types";
+import {
+  IsSharedConfig,
+  IsSteamLibrary,
+  IsGameInfo,
+  IsLocalConfig
+} from "../../util/types";
 import axios from "axios";
 import { info } from "../../util/logger";
 
@@ -42,7 +47,12 @@ export async function get_steam_library() {
 
 export async function get_cached_steam_library() {
   const libraryFile = file("data", "steam-library.json");
-  if (await libraryFile.exists()) {
+  const now = new Date().getTime();
+  // Steam cache is valid for a day
+  if (
+    (await libraryFile.exists()) &&
+    now - (await libraryFile.modified_at()) < 8.64e7
+  ) {
     const result = await libraryFile.read_json("utf-8");
     if (IsSteamLibrary(result)) {
       return result;
@@ -50,6 +60,7 @@ export async function get_cached_steam_library() {
   }
 
   info("No cache, pulling from server");
+  debugger;
   return await get_steam_library();
 }
 
@@ -86,4 +97,22 @@ export async function get_app_info(appid: number) {
 
   await file("data", "app-info", appid.toString() + ".json").write_json(data);
   return data;
+}
+
+export async function get_local_config() {
+  for await (const user of directory("steam_dir", "userdata").children()) {
+    if (!is_directory(user)) {
+      throw new Error("userdata/{user} should be a directory");
+    }
+
+    const configFile = await user.find("config", "localconfig.vdf");
+    const config = await configFile.read_vdf("utf-8");
+    if (IsLocalConfig(config)) {
+      return config;
+    } else {
+      throw new Error("Invalid user local config file");
+    }
+  }
+
+  throw new Error("No local config found");
 }

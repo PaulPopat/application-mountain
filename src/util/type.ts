@@ -2,10 +2,11 @@ import { warn } from "./logger";
 
 export type IsType<T> = T extends (arg: any) => arg is infer T ? T : never;
 
-type Checker<T> = (arg: any) => arg is T;
+type Checker<T> = (arg: any, strict?: boolean) => arg is T;
 type CheckerObject = { [key: string]: Checker<any> };
 type ObjectChecker<T extends CheckerObject> = (
-  arg: any
+  arg: any,
+  strict?: boolean
 ) => arg is { [TKey in keyof T]: IsType<T[TKey]> };
 
 export function IsString(arg: any): arg is string {
@@ -50,7 +51,7 @@ export function IsArray<T>(checker: Checker<T>): Checker<T[]> {
     }
 
     return !arg.find((a, i) => {
-      const result = checker(a);
+      const result = checker(a, true);
       if (!result) {
         const json = JSON.stringify(a);
         warn(
@@ -66,44 +67,72 @@ export function IsArray<T>(checker: Checker<T>): Checker<T[]> {
   };
 }
 
-export function IsUnion<T1>(c1: Checker<T1>): Checker<T1>;
-export function IsUnion<T1, T2>(
+export function IsDiscriminated<T1>(c1: Checker<T1>): Checker<T1>;
+export function IsDiscriminated<T1, T2>(
   c1: Checker<T1>,
   c2: Checker<T2>
 ): Checker<T1 | T2>;
-export function IsUnion<T1, T2, T3>(
+export function IsDiscriminated<T1, T2, T3>(
   c1: Checker<T1>,
   c2: Checker<T2>,
   c3: Checker<T3>
 ): Checker<T1 | T2 | T3>;
-export function IsUnion<T1, T2, T3, T4>(
+export function IsDiscriminated<T1, T2, T3, T4>(
   c1: Checker<T1>,
   c2: Checker<T2>,
   c3: Checker<T3>,
   c4: Checker<T4>
 ): Checker<T1 | T2 | T3 | T4>;
-export function IsUnion<T1, T2, T3, T4, T5>(
+export function IsDiscriminated<T1, T2, T3, T4, T5>(
   c1: Checker<T1>,
   c2: Checker<T2>,
   c3: Checker<T3>,
   c4: Checker<T4>,
   c5: Checker<T5>
 ): Checker<T1 | T2 | T3 | T4 | T5>;
+export function IsDiscriminated(...checkers: Checker<any>[]): Checker<any> {
+  return (arg): arg is IsType<typeof checkers[number]> =>
+    checkers.filter(c => c(arg, true)).length > 0;
+}
+
+export function IsUnion<T1>(c1: Checker<T1>): Checker<T1>;
+export function IsUnion<T1, T2>(
+  c1: Checker<T1>,
+  c2: Checker<T2>
+): Checker<T1 & T2>;
+export function IsUnion<T1, T2, T3>(
+  c1: Checker<T1>,
+  c2: Checker<T2>,
+  c3: Checker<T3>
+): Checker<T1 & T2 & T3>;
+export function IsUnion<T1, T2, T3, T4>(
+  c1: Checker<T1>,
+  c2: Checker<T2>,
+  c3: Checker<T3>,
+  c4: Checker<T4>
+): Checker<T1 & T2 & T3 & T4>;
+export function IsUnion<T1, T2, T3, T4, T5>(
+  c1: Checker<T1>,
+  c2: Checker<T2>,
+  c3: Checker<T3>,
+  c4: Checker<T4>,
+  c5: Checker<T5>
+): Checker<T1 & T2 & T3 & T4 & T5>;
 export function IsUnion(...checkers: Checker<any>[]): Checker<any> {
   return (arg): arg is IsType<typeof checkers[number]> =>
-    checkers.filter(c => c(arg)).length > 0;
+    checkers.filter(c => c(arg, false)).length === checkers.length;
 }
 
 export function IsObject<T extends CheckerObject>(
   checker: T
 ): ObjectChecker<T> {
-  return ((arg: any) => {
+  return ((arg: any, strict: boolean = true) => {
     for (const key in checker) {
       if (!checker.hasOwnProperty(key)) {
         continue;
       }
 
-      if (!checker[key](arg[key])) {
+      if (!checker[key](arg[key], true)) {
         const json = JSON.stringify(arg[key]);
         warn(
           `Failed type check, value "${json &&
@@ -113,14 +142,18 @@ export function IsObject<T extends CheckerObject>(
       }
     }
 
-    for (const key in arg) {
-      if (!arg.hasOwnProperty(key)) {
-        continue;
-      }
+    if (strict) {
+      for (const key in arg) {
+        if (!arg.hasOwnProperty(key)) {
+          continue;
+        }
 
-      if (!checker[key]) {
-        warn(`Failed type check, ${key} exists on object but not on checker.`);
-        return false;
+        if (!checker[key]) {
+          warn(
+            `Failed type check, ${key} exists on object but not on checker.`
+          );
+          return false;
+        }
       }
     }
 
@@ -139,7 +172,7 @@ export function IsDictionary<T>(c: Checker<T>): Checker<{ [key: string]: T }> {
         return false;
       }
 
-      if (!c(arg[key])) {
+      if (!c(arg[key], true)) {
         return false;
       }
     }
@@ -150,6 +183,10 @@ export function IsDictionary<T>(c: Checker<T>): Checker<{ [key: string]: T }> {
 
 export function Optional<T>(c: Checker<T>): Checker<T | null | undefined> {
   return (arg: any): arg is T | null | undefined => {
-    return c(arg) || typeof arg === "undefined" || arg === null;
+    return c(arg, true) || typeof arg === "undefined" || arg === null;
   };
+}
+
+export function DoNotCare(arg: any): arg is unknown {
+  return true;
 }

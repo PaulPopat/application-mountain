@@ -5,15 +5,13 @@ import {
   get_steam_library
 } from "../providers/library-provider";
 import {
-  IsNumber,
   IsString,
   IsArray,
   IsObject,
   Optional,
   IsBoolean
 } from "../../util/type";
-import { spawn } from "child_process";
-import { file, set_steam_app_path } from "../fs";
+import { set_steam_app_path } from "../fs";
 import { shell, BrowserWindow } from "electron";
 import { get_tag } from "../providers/tags-provider";
 import { AppList } from "../../util/types";
@@ -28,25 +26,17 @@ async function get_apps_list(
   }
 
   await set_steam_app_path(window);
-  const userLibrary = await get_user_library();
-  let steamLibrary = await get_cached_steam_library();
+  const lib = await get_user_library();
+  let steamLibrary = force
+    ? await get_steam_library()
+    : await get_cached_steam_library();
   const userApps: number[] = [];
-  for (const key in userLibrary.UserLocalConfigStore.Software.valve.Steam
-    .Apps) {
+  for (const key in lib.UserLocalConfigStore.Software.valve.Steam.Apps) {
     if (
-      userLibrary.UserLocalConfigStore.Software.valve.Steam.Apps.hasOwnProperty(
-        key
-      )
+      lib.UserLocalConfigStore.Software.valve.Steam.Apps.hasOwnProperty(key)
     ) {
       userApps.push(parseInt(key));
     }
-  }
-
-  if (
-    userApps.filter(a => !steamLibrary.applist.apps.find(v => v.appid === a))
-      .length > 0
-  ) {
-    steamLibrary = await get_steam_library();
   }
 
   const result = steamLibrary.applist.apps
