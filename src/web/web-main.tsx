@@ -6,6 +6,7 @@ import { Header } from "./header";
 import { TagsView } from "./tags-view";
 import Store, { State, initial_state } from "./store";
 import { InputField } from "./widgets/input-field";
+import { Fade } from "./widgets/animations";
 
 export class Main extends Component<{ children?: null | never }, State> {
   private readonly store: ReturnType<typeof Store>;
@@ -56,6 +57,9 @@ export class Main extends Component<{ children?: null | never }, State> {
             editing={this.state.editing != null}
           />
           <div className="library-view">
+            <Fade show={this.state.editing != null} fill overlay>
+              <div className="editing-overlay" />
+            </Fade>
             <Loading loading={this.state.loading}>
               <LibraryViewer
                 library={this.state.library}

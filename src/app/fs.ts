@@ -24,16 +24,18 @@ const steamAppPathPath = path.join(
   "steam-path.txt"
 );
 let steamAppPath =
-  fs.existsSync(steamAppPathPath) && fs.readFileSync(steamAppPathPath, "utf-8");
+  (fs.existsSync(steamAppPathPath) &&
+    fs.readFileSync(steamAppPathPath, "utf-8")) ||
+  path.join("C:", "Program File (x86)", "Steam", "Steam.exe");
 
 export async function set_steam_app_path(window: BrowserWindow) {
-  if (!steamAppPath) {
+  if (!steamAppPath || !(await promisify(fs.exists)(steamAppPath))) {
     const loc = await new Promise<string>((res, rej) => {
       dialog.showOpenDialog(
         window,
         {
           properties: ["openFile"],
-          title: "Please locate your steam executable"
+          title: "Cannot find Steam, please locate the Steam.exe file."
         },
         p => {
           if (!p || p.length > 1 || p.length === 0) {
