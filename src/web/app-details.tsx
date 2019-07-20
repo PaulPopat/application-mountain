@@ -67,6 +67,64 @@ export const AppDetails: SFC<{
     refresh();
   }
 
+  const TagDetails = () => (
+    <>
+      {details.tags.length > 0 ? (
+        <Tags>
+          {details.tags.map(t =>
+            editing ? (
+              <Tags key={t.id} has-addons>
+                <Tag rounded>{t.name}</Tag>
+                <Tag
+                  onClick={async () => {
+                    await query("/tags/tag/remove", { id: t.id, app: p.appid });
+                    refresh();
+                  }}
+                  rounded
+                  is-delete
+                />
+              </Tags>
+            ) : (
+              <Tag key={t.id} rounded>
+                {t.name}
+              </Tag>
+            )
+          )}
+        </Tags>
+      ) : (
+        <Field>
+          <p>No tags yet. Why not add some?</p>
+        </Field>
+      )}
+      {editing && (
+        <>
+          <hr className="tags-divider" />
+          <Field>
+            <Tags>
+              {details.allTags
+                .filter(t => !details.tags.find(t1 => t.id === t1.id))
+                .map(t => (
+                  <Tag
+                    key={t.id}
+                    colour="dark"
+                    onClick={async () => {
+                      await query("/tags/tag/add", {
+                        id: t.id,
+                        app: p.appid
+                      });
+                      refresh();
+                    }}
+                  >
+                    {t.name}
+                  </Tag>
+                ))}
+            </Tags>
+          </Field>
+        </>
+      )}
+    </>
+  );
+
   return (
     <>
       <Loading loading={details.loading} fill="#444">
@@ -117,7 +175,7 @@ export const AppDetails: SFC<{
                       <>
                         Tags
                         <Button
-                          type="success"
+                          type="light"
                           size="small"
                           rounded
                           onClick={() => set_editing(!editing)}
@@ -126,63 +184,7 @@ export const AppDetails: SFC<{
                         </Button>
                       </>
                     ),
-                    content: (
-                      <>
-                        {details.tags.length > 0 ? (
-                          <Tags>
-                            {details.tags.map(t =>
-                              editing ? (
-                                <Tags key={t.id} has-addons>
-                                  <Tag rounded>{t.name}</Tag>
-                                  <Tag
-                                    onClick={async () => {
-                                      await query("/tags/tag/remove", {
-                                        id: t.id,
-                                        app: p.appid
-                                      });
-                                      refresh();
-                                    }}
-                                    rounded
-                                    is-delete
-                                  />
-                                </Tags>
-                              ) : (
-                                <Tag key={t.id} rounded>
-                                  {t.name}
-                                </Tag>
-                              )
-                            )}
-                          </Tags>
-                        ) : (
-                          <p>No tags yet. Why not add some?</p>
-                        )}
-                        {editing && (
-                          <Field>
-                            <Tags>
-                              {details.allTags
-                                .filter(
-                                  t => !details.tags.find(t1 => t.id === t1.id)
-                                )
-                                .map(t => (
-                                  <Tag
-                                    key={t.id}
-                                    colour="link"
-                                    onClick={async () => {
-                                      await query("/tags/tag/add", {
-                                        id: t.id,
-                                        app: p.appid
-                                      });
-                                      refresh();
-                                    }}
-                                  >
-                                    {t.name}
-                                  </Tag>
-                                ))}
-                            </Tags>
-                          </Field>
-                        )}
-                      </>
-                    )
+                    content: <TagDetails />
                   }}
                 </Card>
                 {((d.data.categories && d.data.categories.length > 0) ||

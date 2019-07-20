@@ -5,10 +5,17 @@
 
   .card {
     margin-bottom: 15px;
+
+    .tags {
+      margin-bottom: 0;
+    }
   }
 
   .card-header-title .button {
     margin-left: 10px;
+    position: absolute;
+    right: 15px;
+    top: 11px;
   }
 
   .card-content {
@@ -29,6 +36,7 @@
   border-radius: 12px;
   margin-bottom: 15px;
   box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+  height: 73px;
 
   .button {
     margin-bottom: 0;
@@ -48,4 +56,8 @@
     margin-bottom: 4px;
     color: #bbbbbb;
   }
+}
+
+.tags-divider {
+  margin: 10px 2px;
 }
