@@ -5,31 +5,9 @@ You can tag apps and then filter by multiple tags and do text search.
 
 Happy sorting!
 
-Last Release:
-
-- Filter by multiple tags at a time ✓
-- Optimise content refreshes ✓
-- Text search ✓
-- Edit tags on items in the details popup ✓
-- Add steam tags and genres to the details popup ✓
-- Add an installer ✓
-- Add auto updates ✓
-
-Next release:
-
-- Move the app details into a separate window ✓
-- Move the app state to a state manager ✓
-- Make the coms not rely on an async starter ✓
-- Add a confirmation popup for deleting tags ✓
-- Move the edit button onto the header
-- Add a rename function for tags
-- Add a dropdown option for tag editing on the header
-
-Release after:
+To do:
 
 - Improve refresh after buying games
-- Add last played date
-- Add total played time
 - Add support for multiple accounts on one machine
 
 Possible in the future:
