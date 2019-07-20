@@ -1,6 +1,6 @@
-import React, { SFC } from "react";
+import React, { SFC, useState } from "react";
 import { Fade } from "./animations";
-import { Spinner } from "./icons";
+import { Spinner, Chevron } from "./icons";
 import { build_classes } from "../../util/html_utils";
 
 export const Loading: SFC<{
@@ -107,15 +107,16 @@ function buildClasses(props: ButtonProps) {
 }
 
 export const Button: React.SFC<
-  { onClick: () => void } & ButtonProps
+  { onClick: () => void; onBlur?: () => void } & ButtonProps
 > = props => (
-  <div
+  <button
     className={buildClasses(props)}
     onClick={props.onClick}
-    {...{ disabled: props.disabled }}
+    onBlur={props.onBlur}
+    disabled={props.disabled}
   >
     {props.children}
-  </div>
+  </button>
 );
 
 export const Tag: React.SFC<{
@@ -163,3 +164,61 @@ export const Tags: React.SFC<{
     {p.children}
   </div>
 );
+
+export const DropdownItem: SFC<{
+  active?: boolean;
+  onClick: () => void;
+}> = p => (
+  <a
+    href="#"
+    className={build_classes({ "dropdown-item": true, "is-active": p.active })}
+    onClick={p.onClick}
+  >
+    {p.children}
+  </a>
+);
+
+export const DropdownDivider: SFC<{ children?: never[] | null }> = p => (
+  <hr className="dropdown-divider" />
+);
+
+export const Dropdown: SFC<
+  {
+    id: string;
+    hover?: boolean;
+    children: {
+      title: React.ReactNode;
+      content: React.ReactNode;
+    };
+  } & ButtonProps
+> = p => {
+  const [open, set_open] = useState(false);
+
+  if (p.disabled && open) {
+    set_open(false);
+  }
+
+  return (
+    <div
+      className={build_classes({
+        dropdown: true,
+        "is-hoverable": p.hover,
+        "is-active": open && !p.disabled
+      })}
+    >
+      <div className="dropdown-trigger">
+        <Button onClick={() => set_open(!open)} {...p}>
+          <span>{p.children.title}</span>
+          <span className="icon is-small">
+            <Chevron.Down width="1.5em" height="1.5em" fill="#fff" />
+          </span>
+        </Button>
+      </div>
+      <div className="dropdown-menu" id={p.id} role="menu">
+        <div className="dropdown-content" onClick={() => set_open(false)}>
+          {p.children.content}
+        </div>
+      </div>
+    </div>
+  );
+};

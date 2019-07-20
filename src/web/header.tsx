@@ -1,13 +1,22 @@
 import React, { SFC } from "react";
-import { Button, Heading, Buttons } from "./widgets/atoms";
+import {
+  Button,
+  Heading,
+  Buttons,
+  Dropdown,
+  DropdownItem,
+  DropdownDivider
+} from "./widgets/atoms";
 import { send } from "./web-messaging";
 import { debounce } from "../util/debounce";
 import { CloseButton } from "./widgets/input-field";
 
 export const Header: SFC<{
   onRefresh: () => void;
-  canDeleteTag: boolean;
+  canEditTag: boolean;
   onDeleteTag: () => void;
+  onEditTag: () => void;
+  onRenameTag: () => void;
   onSearch: (filter: string) => void;
 }> = p => {
   const search = debounce((val: string) => p.onSearch(val), 250);
@@ -20,13 +29,19 @@ export const Header: SFC<{
         <Button type="info" onClick={p.onRefresh}>
           Refresh
         </Button>
-        <Button
-          type="warning"
-          disabled={!p.canDeleteTag}
-          onClick={() => p.canDeleteTag && p.onDeleteTag()}
-        >
-          Delete tag
-        </Button>
+        <Dropdown id="tag-edit" type="primary" disabled={!p.canEditTag}>
+          {{
+            title: <>Edit tag</>,
+            content: (
+              <>
+                <DropdownItem onClick={p.onEditTag}>Edit Apps</DropdownItem>
+                <DropdownItem onClick={p.onRenameTag}>Rename</DropdownItem>
+                <DropdownDivider />
+                <DropdownItem onClick={p.onDeleteTag}>Delete</DropdownItem>
+              </>
+            )
+          }}
+        </Dropdown>
       </Buttons>
       <Heading level="3">Steam Library</Heading>
 

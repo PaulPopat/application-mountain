@@ -12,7 +12,6 @@ type TagsViewProps = {
   editing: boolean;
   onAddTag: (name: string) => void;
   onSelectTag: (id: string | null) => void;
-  onEditTag: (id: string) => void;
 };
 
 export class TagsView extends Component<
@@ -56,45 +55,24 @@ export class TagsView extends Component<
           <Heading level="4">Tags</Heading>
           <div className="tag-block">
             <div
+              onClick={() => this.props.onSelectTag(null)}
               className={build_classes({
                 "tag-item": true,
                 selected: this.props.selected.length < 1
               })}
             >
-              {this.props.editing ? (
-                "All"
-              ) : (
-                <span onClick={() => this.props.onSelectTag(null)}>All</span>
-              )}
+              All
             </div>
             {this.props.tags.map(t => (
               <div
+                onClick={() => this.props.onSelectTag(t.id)}
                 className={build_classes({
                   "tag-item": true,
                   selected: this.props.selected.find(i => i === t.id) != null
                 })}
                 key={t.id}
               >
-                {this.props.editing ? (
-                  t.name
-                ) : (
-                  <>
-                    <span onClick={() => this.props.onSelectTag(t.id)}>
-                      {t.name}
-                    </span>
-                    <div
-                      className={build_classes({
-                        "edit-button": true,
-                        editing:
-                          this.props.editing &&
-                          this.props.selected.find(i => i === t.id) != null
-                      })}
-                      onClick={_ => this.props.onEditTag(t.id)}
-                    >
-                      Edit
-                    </div>
-                  </>
-                )}
+                {t.name}
               </div>
             ))}
           </div>

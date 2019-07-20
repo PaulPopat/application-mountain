@@ -46,14 +46,30 @@ export async function remove_tag(id: string) {
   await write_tags(tags.filter(t => t.id !== id));
 }
 
-export async function add_apps(id: string, apps: number[]) {
+export async function rename_tag(id: string, name: string) {
+  const tags = await get_tags();
+  await write_tags(
+    tags.map(t => {
+      if (t.id === id) {
+        return {
+          ...t,
+          name
+        };
+      }
+
+      return t;
+    })
+  );
+}
+
+export async function add_app(id: string, app: number) {
   const tags = await get_tags();
   const tag = tags.find(t => t.id === id);
   if (!tag) {
     throw new Error("Could not find tag");
   }
 
-  tag.apps.push(...apps);
+  tag.apps.push(app);
   write_tags(tags);
 }
 

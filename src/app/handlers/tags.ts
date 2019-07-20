@@ -2,9 +2,10 @@ import { handle } from "../coms-service";
 import {
   get_tags,
   add_tag,
-  add_apps,
+  add_app,
   remove_app,
-  remove_tag
+  remove_tag,
+  rename_tag
 } from "../providers/tags-provider";
 import { IsString, IsNumber, IsObject } from "../../util/type";
 
@@ -44,7 +45,15 @@ handle("/tags/tag/add", async info => {
     throw new Error("Invalid data");
   }
 
-  await add_apps(info.id, [info.app]);
+  await add_app(info.id, info.app);
+});
+
+handle("/tags/tag/rename", async info => {
+  if (!IsObject({ id: IsString, name: IsString })(info)) {
+    throw new Error("Invalid data");
+  }
+
+  await rename_tag(info.id, info.name);
 });
 
 handle("/tags/tag/remove", async info => {

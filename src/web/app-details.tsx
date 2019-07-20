@@ -16,11 +16,13 @@ export const AppDetails: SFC<{
     tags: TagsList;
     allTags: TagsList;
     installed: boolean;
+    loading: boolean;
   }>({
     info: {},
     tags: [],
     allTags: [],
-    installed: false
+    installed: false,
+    loading: true
   });
 
   const [editing, set_editing] = useState(false);
@@ -38,16 +40,16 @@ export const AppDetails: SFC<{
       throw new Error("Invalid app info from server");
     }
 
-    set_details(de);
+    set_details({ ...de, loading: false });
   };
 
-  if (!d || !d.data) {
+  if (details.loading) {
     refresh();
   }
 
   return (
     <>
-      <Loading loading={!d || !d.data} fill="#444">
+      <Loading loading={details.loading} fill="#444">
         {d && d.data && (
           <div className="app-details">
             <div className="header">

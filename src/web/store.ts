@@ -10,6 +10,7 @@ export type State = {
   editing: string | null;
   selected: string[];
   loading: boolean;
+  renaming: boolean;
   search: string;
 };
 
@@ -21,6 +22,7 @@ export const initial_state: Readonly<State> = {
   editing: null,
   selected: [],
   loading: true,
+  renaming: false,
   search: ""
 };
 
@@ -33,6 +35,10 @@ export default function(getState: () => State, setState: SetState) {
     filter: string,
     force: boolean = false
   ) {
+    const timeout = setTimeout(
+      () => setState(s => ({ ...s, loading: true })),
+      100
+    );
     const library = await query("/", {
       tags: tagids,
       filter,
@@ -52,6 +58,7 @@ export default function(getState: () => State, setState: SetState) {
       throw new Error("Invalid tags");
     }
 
+    clearTimeout(timeout);
     return {
       library,
       installed,
@@ -60,7 +67,8 @@ export default function(getState: () => State, setState: SetState) {
       editing: null,
       selected: tagids,
       search: filter,
-      loading: false
+      loading: false,
+      renaming: false
     };
   }
 
@@ -76,13 +84,6 @@ export default function(getState: () => State, setState: SetState) {
       const state = getState();
       await query("/tags/remove", state.selected[0]);
       setState(await refresh([], state.search));
-    },
-    async edit_tag(id: string) {
-      const state = getState();
-      setState({
-        ...(await refresh([], state.search)),
-        editing: id
-      });
     },
     async add_tag(name: string) {
       const id = await query("/tags/add", name);
@@ -105,6 +106,13 @@ export default function(getState: () => State, setState: SetState) {
         })
       }));
     },
+    async edit_current() {
+      const state = getState();
+      setState({
+        ...(await refresh([], state.search)),
+        editing: state.selected[0]
+      });
+    },
     async search(filter: string) {
       const state = getState();
       setState(await refresh(state.selected, filter));
@@ -115,6 +123,7 @@ export default function(getState: () => State, setState: SetState) {
         setState(await refresh([], state.search));
         return;
       }
+
       if (!state.selected.find(i => i === id)) {
         setState(await refresh([...state.selected, id], state.search));
         return;
@@ -175,6 +184,19 @@ export default function(getState: () => State, setState: SetState) {
     },
     stop_deleting() {
       setState(s => ({ ...s, deleting: false }));
+    },
+    start_rename() {
+      setState(s => ({ ...s, renaming: true }));
+    },
+    stop_rename() {
+      setState(s => ({ ...s, renaming: false }));
+    },
+    async submit_name(name: string) {
+      const state = getState();
+      await query("/tags/tag/rename", { id: state.selected[0], name });
+      setState({
+        ...(await refresh(state.selected, state.search))
+      });
     }
   };
 }

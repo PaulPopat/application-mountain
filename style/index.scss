@@ -124,6 +124,7 @@ html {
     height: 100%;
     transition: width 150ms;
     border-right: 1px solid #ddd;
+    box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, 0.62);
   }
 
   .library-view {
@@ -182,4 +183,13 @@ html {
 
 .shadow-scroll {
   box-shadow: inset 0px 0px 75px 0px rgba(0, 0, 0, 0.62);
+}
+
+.dropdown-trigger .button {
+  margin-bottom: 0;
+}
+
+.buttons .dropdown {
+  margin-bottom: 0.5em;
+  margin-right: 0.5em;
 }

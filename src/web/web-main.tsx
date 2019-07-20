@@ -5,6 +5,7 @@ import { Modal } from "./widgets/modal";
 import { Header } from "./header";
 import { TagsView } from "./tags-view";
 import Store, { State, initial_state } from "./store";
+import { InputField } from "./widgets/input-field";
 
 export class Main extends Component<{ children?: null | never }, State> {
   private readonly store: ReturnType<typeof Store>;
@@ -24,6 +25,10 @@ export class Main extends Component<{ children?: null | never }, State> {
     return tag;
   };
 
+  private readonly tag_exists = (tagid: string) => {
+    return this.state.tags.find(t => t.id === tagid) != null;
+  };
+
   public async componentDidMount() {
     await this.store.refresh(false);
   }
@@ -33,9 +38,11 @@ export class Main extends Component<{ children?: null | never }, State> {
       <div className="app">
         <Header
           onRefresh={async () => await this.store.refresh(true)}
-          canDeleteTag={this.state.selected.length === 1}
+          canEditTag={this.state.selected.length === 1}
           onDeleteTag={this.store.delete_tag}
           onSearch={this.store.search}
+          onEditTag={this.store.edit_current}
+          onRenameTag={this.store.start_rename}
         />
         <div className="body">
           <TagsView
@@ -44,7 +51,6 @@ export class Main extends Component<{ children?: null | never }, State> {
               (this.state.editing && [this.state.editing]) ||
               this.state.selected
             }
-            onEditTag={this.store.edit_tag}
             onAddTag={this.store.add_tag}
             onSelectTag={this.store.select_tag}
             editing={this.state.editing != null}
@@ -87,6 +93,19 @@ export class Main extends Component<{ children?: null | never }, State> {
                   Cancel
                 </Button>
               </Buttons>
+            </Modal>
+
+            <Modal show={this.state.renaming} onHide={this.store.stop_rename}>
+              <Heading level="3">Rename Tag</Heading>
+              <InputField
+                placeholder={
+                  (this.tag_exists(this.state.selected[0]) &&
+                    this.get_tag(this.state.selected[0]).name) ||
+                  ""
+                }
+                onSubmit={this.store.submit_name}
+                onCancel={this.store.stop_rename}
+              />
             </Modal>
           </div>
         </div>

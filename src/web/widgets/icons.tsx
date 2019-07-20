@@ -117,3 +117,26 @@ export const Check: SFC<IconProps> = p => (
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
+
+type TChevron = {
+  Down: SFC<IconProps>;
+};
+
+export const Chevron: TChevron = {
+  Down: p => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      stroke={p.fill}
+      width={p.width}
+      height={p.height}
+    >
+      {p.children}
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  )
+};
