@@ -2,19 +2,25 @@ import { handle } from "../coms-service";
 import {
   get_user_library,
   get_cached_steam_library,
-  get_steam_library
+  get_steam_library,
+  get_users
 } from "../providers/library-provider";
 import {
   IsString,
   IsArray,
   IsObject,
   Optional,
-  IsBoolean
+  IsBoolean,
+  IsNumber
 } from "../../util/type";
 import { set_steam_app_path, file } from "../fs";
 import { shell, BrowserWindow } from "electron";
 import { get_tag } from "../providers/tags-provider";
 import { AppList, IsSizes } from "../../util/types";
+import {
+  get_current_user,
+  set_current_user
+} from "../providers/prefered-user-provider";
 
 const sizes_file = file("data", "window-sizes.json");
 
@@ -28,7 +34,7 @@ async function get_apps_list(
   }
 
   await set_steam_app_path(window);
-  const lib = await get_user_library();
+  const lib = await get_user_library(await get_current_user());
   let steamLibrary = force
     ? await get_steam_library()
     : await get_cached_steam_library();
@@ -104,4 +110,20 @@ handle("window/close", async (_, window, name) => {
 
 handle("window/minimise", async (_, window) => {
   window.minimize();
+});
+
+handle("/users", async _ => {
+  return await get_users();
+});
+
+handle("/users/user", async userid => {
+  if (!userid) {
+    return await get_current_user();
+  }
+
+  if (!IsNumber(userid)) {
+    throw new Error("Invalid user id");
+  }
+
+  await set_current_user(userid);
 });

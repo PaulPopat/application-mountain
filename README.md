@@ -8,7 +8,6 @@ Happy sorting!
 To do:
 
 - Improve refresh after buying games
-- Add support for multiple accounts on one machine
 
 Possible in the future:
 

@@ -8,10 +8,14 @@ import {
 import axios from "axios";
 import { info } from "../../util/logger";
 
-export async function get_user_library() {
+export async function get_user_library(userid: number) {
   for await (const user of directory("steam_dir", "userdata").children()) {
     if (!is_directory(user)) {
       throw new Error("userdata/{user} should be a directory");
+    }
+
+    if (parseInt(user.name) !== userid) {
+      continue;
     }
 
     const libraryFile = await user.find("7", "remote", "sharedconfig.vdf");
@@ -99,10 +103,14 @@ export async function get_app_info(appid: number) {
   return data;
 }
 
-export async function get_local_config() {
+export async function get_local_config(userid: number) {
   for await (const user of directory("steam_dir", "userdata").children()) {
     if (!is_directory(user)) {
       throw new Error("userdata/{user} should be a directory");
+    }
+
+    if (parseInt(user.name) !== userid) {
+      continue;
     }
 
     const configFile = await user.find("config", "localconfig.vdf");
@@ -115,4 +123,26 @@ export async function get_local_config() {
   }
 
   throw new Error("No local config found");
+}
+
+export async function get_users() {
+  const result: { username: string; userid: number }[] = [];
+  for await (const user of directory("steam_dir", "userdata").children()) {
+    if (!is_directory(user)) {
+      throw new Error("userdata/{user} should be a directory");
+    }
+
+    const configFile = await user.find("config", "localconfig.vdf");
+    const config = await configFile.read_vdf("utf-8");
+    if (IsLocalConfig(config)) {
+      result.push({
+        userid: parseInt(user.name),
+        username: config.UserLocalConfigStore.friends.PersonaName
+      });
+    } else {
+      throw new Error("Invalid user local config file");
+    }
+  }
+
+  return result;
 }

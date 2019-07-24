@@ -2,7 +2,7 @@
   transition: opacity 150ms ease-in-out;
   opacity: 0;
 
-  &:not(:first-child) {
+  &:not(:last-child) {
     position: absolute;
     top: 0;
     left: 0;

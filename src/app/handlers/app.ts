@@ -6,6 +6,7 @@ import { get_app_info, get_local_config } from "../providers/library-provider";
 import { get_installed_apps } from "../providers/installation-provider";
 import { get_tags_on_app, get_tags } from "../providers/tags-provider";
 import { create_window } from "../window-service";
+import { get_current_user } from "../providers/prefered-user-provider";
 
 handle("/app/start", async appid => {
   if (!IsNumber(appid)) {
@@ -28,7 +29,7 @@ handle("/app/info", async appid => {
   }
 
   const getLastPlayed = async () => {
-    const config = await get_local_config();
+    const config = await get_local_config(await get_current_user());
     const apps = config.UserLocalConfigStore.Software.valve.Steam.Apps;
     for (const key in apps) {
       if (!apps.hasOwnProperty(key)) {

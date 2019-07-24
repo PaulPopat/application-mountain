@@ -67,3 +67,17 @@ export const CloseButton: SFC<{
     </div>
   </div>
 );
+
+export const Select: SFC<{
+  onSelect: (value: string) => void;
+  selected: string;
+  children: { [key: string]: string };
+}> = p => (
+  <div className="select">
+    <select value={p.selected} onChange={e => p.onSelect(e.target.value)}>
+      {Object.keys(p.children).map(k => (
+        <option key={k}>{p.children[k]}</option>
+      ))}
+    </select>
+  </div>
+);

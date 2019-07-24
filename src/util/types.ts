@@ -208,7 +208,10 @@ export const IsLocalConfig = IsObject({
   UserLocalConfigStore: IsObject({
     streaming_v2: DoNotCare,
     Broadcast: DoNotCare,
-    friends: DoNotCare,
+    friends: IsUnion(
+      IsObject({ PersonaName: IsString }),
+      IsDictionary(DoNotCare)
+    ),
     apptickets: DoNotCare,
     Offline: DoNotCare,
     ParentalSettings: DoNotCare,
