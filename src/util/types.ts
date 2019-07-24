@@ -259,3 +259,12 @@ export const IsLocalConfig = IsObject({
 });
 
 export type LocalConfig = IsType<typeof IsLocalConfig>;
+
+export const IsSizes = IsDictionary(
+  IsObject({
+    width: IsNumber,
+    height: IsNumber,
+    x: IsNumber,
+    y: IsNumber
+  })
+);

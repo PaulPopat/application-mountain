@@ -1,24 +1,57 @@
 import { BrowserWindow } from "electron";
 import environment from "../util/environment";
-import { autoUpdater } from "electron-updater";
 import { add_coms } from "./coms-service";
 import { messagingService } from "./server-messaging";
+import { file } from "./fs";
+import { IsSizes } from "../util/types";
+
+const sizes_file = file("data", "window-sizes.json");
 
 let windows: BrowserWindow[] = [];
-export function create_window(
-  width: number,
-  height: number,
+export async function create_window(
+  name: string,
+  dimensions: {
+    width: number;
+    height: number;
+    maxWidth?: number | undefined;
+    maxHeight?: number | undefined;
+  },
   ...params: string[]
 ) {
-  const window = new BrowserWindow({
-    width,
-    height,
-    webPreferences: {
-      nodeIntegration: true,
-      additionalArguments: params
-    },
-    frame: false
-  });
+  if (!(await sizes_file.exists())) {
+    await sizes_file.write_json({});
+  }
+
+  const sizes = await sizes_file.read_json("utf-8");
+  if (!IsSizes(sizes)) {
+    throw new Error("Invalid window bounds");
+  }
+
+  const window = sizes[name]
+    ? new BrowserWindow({
+        width: sizes[name].width,
+        height: sizes[name].height,
+        x: sizes[name].x,
+        y: sizes[name].y,
+        maxWidth: dimensions.maxWidth,
+        maxHeight: dimensions.maxHeight,
+        webPreferences: {
+          nodeIntegration: true,
+          additionalArguments: params
+        },
+        frame: false
+      })
+    : new BrowserWindow({
+        width: dimensions.width,
+        height: dimensions.height,
+        maxWidth: dimensions.maxWidth,
+        maxHeight: dimensions.maxHeight,
+        webPreferences: {
+          nodeIntegration: true,
+          additionalArguments: params
+        },
+        frame: false
+      });
 
   window.setMenuBarVisibility(false);
 
@@ -35,12 +68,7 @@ export function create_window(
     windows = windows.filter(w => w === window);
   });
 
-  add_coms(messagingService(window));
-
-  if (!environment.is_dev) {
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-
+  add_coms(messagingService(window, name));
   return window;
 }
 

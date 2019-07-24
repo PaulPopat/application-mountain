@@ -11,10 +11,12 @@ import {
   Optional,
   IsBoolean
 } from "../../util/type";
-import { set_steam_app_path } from "../fs";
+import { set_steam_app_path, file } from "../fs";
 import { shell, BrowserWindow } from "electron";
 import { get_tag } from "../providers/tags-provider";
-import { AppList } from "../../util/types";
+import { AppList, IsSizes } from "../../util/types";
+
+const sizes_file = file("data", "window-sizes.json");
 
 let apps: AppList = [];
 async function get_apps_list(
@@ -84,6 +86,22 @@ handle("/store", async _ => {
   shell.openExternal("https://store.steampowered.com/");
 });
 
-handle("window/close", async (_, window) => {
+handle("window/close", async (_, window, name) => {
+  const bounds = window.getBounds();
+  if (!(await sizes_file.exists())) {
+    await sizes_file.write_json({});
+  }
+
+  const result = await sizes_file.read_json("utf-8");
+  if (!IsSizes(result)) {
+    throw new Error("Invalid window bounds");
+  }
+
+  result[name] = bounds;
+  await sizes_file.write_json(result);
   window.close();
+});
+
+handle("window/minimise", async (_, window) => {
+  window.minimize();
 });

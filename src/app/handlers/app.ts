@@ -62,5 +62,9 @@ handle("/app/open", async appid => {
     throw new Error("Invalid app id");
   }
 
-  create_window(600, 900, `--appid=${appid}`);
+  create_window(
+    "app-details",
+    { width: 600, height: 900, maxWidth: 600 },
+    `--appid=${appid}`
+  );
 });
