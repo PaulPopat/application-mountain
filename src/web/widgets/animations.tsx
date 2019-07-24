@@ -98,11 +98,17 @@ export const Fade: SFC<{
   finished?: (shown: boolean) => void;
   show: boolean;
   overlay?: boolean;
+  "flex-fill"?: boolean;
 }> = p => (
   <Transition timeout={150} show={p.show} finished={p.finished}>
     {s => (
       <div
-        className={build_classes({ [s]: true, fade: true, fill: p.fill })}
+        className={build_classes({
+          [s]: true,
+          fade: true,
+          fill: p.fill,
+          "flex-fill": p["flex-fill"]
+        })}
         style={
           p.overlay
             ? {

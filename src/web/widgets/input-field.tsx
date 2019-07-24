@@ -1,6 +1,6 @@
 import React, { Component, SFC, createRef } from "react";
 import { Button } from "./atoms";
-import { Close } from "./icons";
+import { Close, Minimise } from "./icons";
 import { send } from "../web-messaging";
 
 export class InputField extends Component<{
@@ -59,6 +59,9 @@ export const CloseButton: SFC<{
   fill: string;
 }> = p => (
   <div className="window-actions">
+    <div className="close-button" onClick={() => send("window/minimise")}>
+      <Minimise fill={p.fill} width="100%" height="100%" />
+    </div>
     <div className="close-button" onClick={() => send("window/close")}>
       <Close fill={p.fill} width="100%" height="100%" />
     </div>

@@ -8,12 +8,23 @@ export const Loading: SFC<{
   width?: string;
   height?: string;
   fill?: string;
+  "flex-fill"?: boolean;
 }> = p => (
   <>
-    <Fade show={!p.loading} fill overlay>
+    <Fade
+      show={!p.loading}
+      fill={!p["flex-fill"]}
+      overlay={!p["flex-fill"]}
+      flex-fill={p["flex-fill"]}
+    >
       {p.children}
     </Fade>
-    <Fade show={p.loading} fill overlay>
+    <Fade
+      show={p.loading}
+      fill={!p["flex-fill"]}
+      overlay={!p["flex-fill"]}
+      flex-fill={p["flex-fill"]}
+    >
       <div
         className="loading-container fill"
         style={{ width: p.width, height: p.height }}

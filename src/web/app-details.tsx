@@ -8,10 +8,7 @@ import {
   Field,
   Tags,
   Tag,
-  Columns,
-  Buttons,
-  Card,
-  CardFooterItem
+  Card
 } from "./widgets/atoms";
 import Scrollbars from "react-custom-scrollbars";
 import { IsObject, IsBoolean, IsNumber, Optional } from "../util/type";
@@ -126,96 +123,96 @@ export const AppDetails: SFC<{
   );
 
   return (
-    <>
-      <Loading loading={details.loading} fill="#444">
-        {d && d.data && (
-          <div className="app-details">
-            <div className="header">
-              <Heading level="3" title={d.data.name}>
-                {d.data.name}
-              </Heading>
-              <CloseButton fill="#ddd" />
-            </div>
-            <Scrollbars
-              style={{ width: "100%", flex: "1" }}
-              className="shadow-scroll"
-            >
-              <Carousel
-                paths={d.data.screenshots.map(s => s.path_full)}
-                interval={4000}
-              />
-              <div className="content-container">
-                <div className="install-and-last-played">
-                  <Button
-                    onClick={() => send("/app/start", p.appid)}
-                    type="primary"
-                    rounded
-                  >
-                    {details.installed ? "Play Game" : "Install"}
-                  </Button>
-                  {details.lastPlayed && (
-                    <div className="last-played">
-                      <Heading level="5" subtitle>
-                        Last Opened:
-                      </Heading>
-                      <p>{get_date(details.lastPlayed).toLocaleDateString()}</p>
-                    </div>
-                  )}
-                </div>
-                <Field>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: d.data.short_description
-                    }}
-                  />
-                </Field>
-                <Card>
-                  {{
-                    header: (
-                      <>
-                        Tags
-                        <Button
-                          type="light"
-                          size="small"
-                          rounded
-                          onClick={() => set_editing(!editing)}
-                        >
-                          {editing ? "Done" : "Edit"}
-                        </Button>
-                      </>
-                    ),
-                    content: <TagDetails />
-                  }}
-                </Card>
-                {((d.data.categories && d.data.categories.length > 0) ||
-                  (d.data.genres && d.data.genres.length > 0)) && (
-                  <Card>
-                    {{
-                      header: "Steam Categories",
-                      content: (
-                        <Tags>
-                          {d.data.categories &&
-                            d.data.categories.map(c => (
-                              <Tag key={c.id} rounded>
-                                {c.description}
-                              </Tag>
-                            ))}
-                          {d.data.genres &&
-                            d.data.genres.map(g => (
-                              <Tag key={g.id} rounded>
-                                {g.description}
-                              </Tag>
-                            ))}
-                        </Tags>
-                      )
-                    }}
-                  </Card>
+    <div className="app-details">
+      <div className="header">
+        <Heading level="3" title={(d && d.data && d.data.name) || ""}>
+          {(d && d.data && d.data.name) || ""}
+        </Heading>
+        <CloseButton fill="#ddd" />
+      </div>
+      <Loading loading={details.loading} fill="#444" flex-fill>
+        {d && d.data ? (
+          <Scrollbars
+            style={{ width: "100%", height: "100%" }}
+            className="shadow-scroll"
+          >
+            <Carousel
+              paths={d.data.screenshots.map(s => s.path_full)}
+              interval={4000}
+            />
+            <div className="content-container">
+              <div className="install-and-last-played">
+                <Button
+                  onClick={() => send("/app/start", p.appid)}
+                  type="primary"
+                  rounded
+                >
+                  {details.installed ? "Play Game" : "Install"}
+                </Button>
+                {details.lastPlayed && (
+                  <div className="last-played">
+                    <Heading level="5" subtitle>
+                      Last Opened
+                    </Heading>
+                    <p>{get_date(details.lastPlayed).toLocaleDateString()}</p>
+                  </div>
                 )}
               </div>
-            </Scrollbars>
-          </div>
+              <Field>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: d.data.short_description
+                  }}
+                />
+              </Field>
+              <Card>
+                {{
+                  header: (
+                    <>
+                      Tags
+                      <Button
+                        type="light"
+                        size="small"
+                        rounded
+                        onClick={() => set_editing(!editing)}
+                      >
+                        {editing ? "Done" : "Edit"}
+                      </Button>
+                    </>
+                  ),
+                  content: <TagDetails />
+                }}
+              </Card>
+              {((d.data.categories && d.data.categories.length > 0) ||
+                (d.data.genres && d.data.genres.length > 0)) && (
+                <Card>
+                  {{
+                    header: "Steam Categories",
+                    content: (
+                      <Tags>
+                        {d.data.categories &&
+                          d.data.categories.map(c => (
+                            <Tag key={c.id} rounded>
+                              {c.description}
+                            </Tag>
+                          ))}
+                        {d.data.genres &&
+                          d.data.genres.map(g => (
+                            <Tag key={g.id} rounded>
+                              {g.description}
+                            </Tag>
+                          ))}
+                      </Tags>
+                    )
+                  }}
+                </Card>
+              )}
+            </div>
+          </Scrollbars>
+        ) : (
+          <Heading level="5">Looks like this app has no details...</Heading>
         )}
       </Loading>
-    </>
+    </div>
   );
 };

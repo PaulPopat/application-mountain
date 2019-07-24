@@ -29,6 +29,7 @@ const LibraryItem: SFC<{
               <Check fill="#fff" width="18px" height="18px" />
             </div>
           )}
+          <span className="overlay" />
         </span>
       </span>
     </Fragment>
