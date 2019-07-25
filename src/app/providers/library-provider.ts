@@ -1,12 +1,17 @@
-import { directory, is_directory, file } from "../fs";
+import { directory, is_directory, file, set_steam_app_path } from "../fs";
 import {
   IsSharedConfig,
   IsSteamLibrary,
   IsGameInfo,
-  IsLocalConfig
+  IsLocalConfig,
+  AppList
 } from "../../util/types";
 import axios from "axios";
 import { info } from "../../util/logger";
+import { BrowserWindow } from "electron";
+import { get_current_user } from "./prefered-user-provider";
+import { start, start_detached } from "../application-service";
+import { wait } from "../../util/time";
 
 export async function get_user_library(userid: number) {
   for await (const user of directory("steam_dir", "userdata").children()) {
@@ -144,5 +149,59 @@ export async function get_users() {
     }
   }
 
+  return result;
+}
+
+let user = -1;
+let apps: AppList = [];
+export async function get_apps_list(
+  window: BrowserWindow,
+  force: boolean | null | undefined
+) {
+  const cuser = await get_current_user();
+  if (apps.length && !force && cuser !== user) {
+    return apps;
+  }
+
+  const runningApps = await start("tasklist");
+  if (runningApps.includes("SteamService.exe")) {
+    await start(file("steam").path, "-shutdown");
+  }
+
+  start_detached(file("steam").path, "-silent");
+  while (!(await start("tasklist")).includes("SteamService.exe")) {
+    await wait(4000);
+  }
+
+  user = cuser;
+  await set_steam_app_path(window);
+  const lib = await get_user_library(cuser);
+  let steamLibrary = force
+    ? await get_steam_library()
+    : await get_cached_steam_library();
+  const userApps: number[] = [];
+  for (const key in lib.UserLocalConfigStore.Software.valve.Steam.Apps) {
+    if (
+      lib.UserLocalConfigStore.Software.valve.Steam.Apps.hasOwnProperty(key)
+    ) {
+      userApps.push(parseInt(key));
+    }
+  }
+
+  const result = steamLibrary.applist.apps
+    .filter(a => userApps.find(u => a.appid === u))
+    .sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+
+      if (a.name > b.name) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+  apps = result;
   return result;
 }

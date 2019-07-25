@@ -1,21 +1,19 @@
 import { handle } from "../coms-service";
 import { IsNumber } from "../../util/type";
-import { spawn } from "child_process";
 import { file } from "../fs";
 import { get_app_info, get_local_config } from "../providers/library-provider";
 import { get_installed_apps } from "../providers/installation-provider";
 import { get_tags_on_app, get_tags } from "../providers/tags-provider";
 import { create_window } from "../window-service";
 import { get_current_user } from "../providers/prefered-user-provider";
+import { start_detached } from "../application-service";
 
 handle("/app/start", async appid => {
   if (!IsNumber(appid)) {
     return;
   }
 
-  spawn(file("steam").path, ["-applaunch", appid.toString()], {
-    detached: true
-  });
+  start_detached(file("steam").path, "-applaunch", appid.toString());
 });
 
 handle("/app/info", async appid => {
