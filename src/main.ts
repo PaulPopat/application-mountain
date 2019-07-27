@@ -14,6 +14,10 @@ app.on("ready", async () => {
   window.on("closed", async () => {
     app.quit();
   });
+
+  if (!environment.is_dev) {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 });
 
 app.on("activate", async () => {
