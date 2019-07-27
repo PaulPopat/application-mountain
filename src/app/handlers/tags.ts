@@ -5,7 +5,9 @@ import {
   add_app,
   remove_app,
   remove_tag,
-  rename_tag
+  rename_tag,
+  export_tags,
+  import_tags
 } from "../providers/tags-provider";
 import { IsString, IsNumber, IsObject } from "../../util/type";
 
@@ -62,4 +64,12 @@ handle("/tags/tag/remove", async info => {
   }
 
   await remove_app(info.id, info.app);
+});
+
+handle("/tags/export", async (_, window) => {
+  await export_tags(window);
+});
+
+handle("/tags/import", async (_, window) => {
+  await import_tags(window);
 });

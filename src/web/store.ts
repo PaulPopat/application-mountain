@@ -1,6 +1,7 @@
 import { AppList, TagsList, IsAppList, IsTagsList } from "../util/types";
 import { query, send } from "./web-messaging";
 import { IsArray, IsNumber, IsString, IsObject, Optional } from "../util/type";
+import { import_tags } from "../app/providers/tags-provider";
 
 export type State = {
   library: AppList;
@@ -217,6 +218,13 @@ export default function(getState: () => State, setState: SetState) {
     async set_user(userid: number) {
       const state = getState();
       await query("/users/user", userid);
+      setState({
+        ...(await refresh(state.selected, state.search))
+      });
+    },
+    async import_tags() {
+      const state = getState();
+      await query("/tags/import");
       setState({
         ...(await refresh(state.selected, state.search))
       });

@@ -63,7 +63,7 @@ handle("/app/open", async appid => {
 
   create_window(
     "app-details",
-    { width: 600, height: 900, maxWidth: 600 },
+    { width: 600, height: 900, maxWidth: 600, minWidth: 600 },
     `--appid=${appid}`
   );
 });

@@ -1,9 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { app, dialog, BrowserWindow } from "electron";
+import { app, BrowserWindow } from "electron";
 import * as VDF from "@node-steam/vdf";
 import { promisify } from "util";
 import environment from "../util/environment";
+import { dialog } from "./dialog";
 
 type Encoding =
   | "ascii"
@@ -29,24 +30,20 @@ let steamAppPath =
   path.join("C:", "Program File (x86)", "Steam", "Steam.exe");
 
 export async function set_steam_app_path(window: BrowserWindow) {
-  if (!steamAppPath || !(await promisify(fs.exists)(steamAppPath))) {
-    const loc = await new Promise<string>((res, rej) => {
-      dialog.showOpenDialog(
-        window,
-        {
-          properties: ["openFile"],
-          title: "Cannot find Steam, please locate the Steam.exe file."
-        },
-        p => {
-          if (!p || p.length > 1 || p.length === 0) {
-            rej(new Error("Invalid file selection"));
-            return;
-          }
-
-          res(p[0]);
-        }
-      );
+  while (
+    !steamAppPath ||
+    !(await promisify(fs.exists)(steamAppPath)) ||
+    path.basename(steamAppPath) !== "Steam.exe"
+  ) {
+    const loc = await dialog(window, {
+      properties: ["openFile"],
+      title: "Cannot find Steam, please locate the Steam.exe file.",
+      filters: [{ extensions: ["exe"], name: "Executable" }]
     });
+
+    if (!loc) {
+      continue;
+    }
 
     await promisify(fs.writeFile)(steamAppPathPath, loc);
     steamAppPath = loc;
@@ -56,7 +53,9 @@ export async function set_steam_app_path(window: BrowserWindow) {
 const locations = {
   data: path.join(app.getPath("appData"), dirname),
   downloads: app.getPath("downloads"),
-  steam: steamAppPath || "",
+  get steam() {
+    return steamAppPath || "";
+  },
   get steam_dir() {
     return path.dirname(steamAppPath || "");
   }

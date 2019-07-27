@@ -8,7 +8,6 @@ import {
 } from "../../util/types";
 import axios from "axios";
 import { info } from "../../util/logger";
-import { BrowserWindow } from "electron";
 import { get_current_user } from "./prefered-user-provider";
 import { start, start_detached } from "../application-service";
 import { wait } from "../../util/time";
@@ -69,7 +68,6 @@ export async function get_cached_steam_library() {
   }
 
   info("No cache, pulling from server");
-  debugger;
   return await get_steam_library();
 }
 
@@ -154,12 +152,9 @@ export async function get_users() {
 
 let user = -1;
 let apps: AppList = [];
-export async function get_apps_list(
-  window: BrowserWindow,
-  force: boolean | null | undefined
-) {
+export async function get_apps_list(force: boolean | null | undefined) {
   const cuser = await get_current_user();
-  if (apps.length && !force && cuser !== user) {
+  if (apps.length && !force && cuser === user) {
     return apps;
   }
 
@@ -174,7 +169,6 @@ export async function get_apps_list(
   }
 
   user = cuser;
-  await set_steam_app_path(window);
   const lib = await get_user_library(cuser);
   let steamLibrary = force
     ? await get_steam_library()

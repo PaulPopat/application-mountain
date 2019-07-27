@@ -8,7 +8,7 @@ import {
   IsBoolean,
   IsNumber
 } from "../../util/type";
-import { file } from "../fs";
+import { file, set_steam_app_path } from "../fs";
 import { shell } from "electron";
 import { get_tag } from "../providers/tags-provider";
 import { IsSizes } from "../../util/types";
@@ -31,7 +31,8 @@ handle("/", async (options, window) => {
     throw new Error("Invalid options format");
   }
 
-  let result = await get_apps_list(window, options.force);
+  await set_steam_app_path(window);
+  let result = await get_apps_list(options.force);
 
   for (const tagid of options.tags) {
     const tag = await get_tag(tagid);

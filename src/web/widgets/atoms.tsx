@@ -61,7 +61,13 @@ export const Section: SFC = p => (
 
 export const Field: SFC = p => <div className="field">{p.children}</div>;
 
-export const Buttons: SFC = p => <div className="buttons">{p.children}</div>;
+export const Buttons: SFC<{ "has-addons"?: boolean }> = p => (
+  <div
+    className={build_classes({ buttons: true, "has-addons": p["has-addons"] })}
+  >
+    {p.children}
+  </div>
+);
 
 export const Heading: SFC<{
   subtitle?: boolean;

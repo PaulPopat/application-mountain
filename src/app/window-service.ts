@@ -15,6 +15,8 @@ export async function create_window(
     height: number;
     maxWidth?: number | undefined;
     maxHeight?: number | undefined;
+    minWidth?: number | undefined;
+    minHeight?: number | undefined;
   },
   ...params: string[]
 ) {
@@ -33,6 +35,8 @@ export async function create_window(
         height: sizes[name].height,
         x: sizes[name].x,
         y: sizes[name].y,
+        minWidth: dimensions.minWidth,
+        minHeight: dimensions.minHeight,
         maxWidth: dimensions.maxWidth,
         maxHeight: dimensions.maxHeight,
         webPreferences: {
@@ -44,6 +48,8 @@ export async function create_window(
     : new BrowserWindow({
         width: dimensions.width,
         height: dimensions.height,
+        minWidth: dimensions.minWidth,
+        minHeight: dimensions.minHeight,
         maxWidth: dimensions.maxWidth,
         maxHeight: dimensions.maxHeight,
         webPreferences: {

@@ -47,6 +47,7 @@ export class Main extends Component<{ children?: null | never }, State> {
           onSearch={this.store.search}
           onEditTag={this.store.edit_current}
           onRenameTag={this.store.start_rename}
+          onImportTags={this.store.import_tags}
         />
         <div className="body">
           <TagsView

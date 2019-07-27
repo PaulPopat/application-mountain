@@ -7,7 +7,7 @@ import {
   DropdownItem,
   DropdownDivider
 } from "./widgets/atoms";
-import { send } from "./web-messaging";
+import { send, query } from "./web-messaging";
 import { debounce } from "../util/debounce";
 import { CloseButton, Select } from "./widgets/input-field";
 
@@ -21,6 +21,7 @@ export const Header: SFC<{
   onEditTag: () => void;
   onRenameTag: () => void;
   onSearch: (filter: string) => void;
+  onImportTags: () => void;
 }> = p => {
   const search = debounce((val: string) => p.onSearch(val), 250);
   return (
@@ -45,6 +46,12 @@ export const Header: SFC<{
             )
           }}
         </Dropdown>
+        <Button type="warning" onClick={() => query("/tags/export")}>
+          Export tags
+        </Button>
+        <Button type="danger" onClick={p.onImportTags}>
+          Import tags
+        </Button>
       </Buttons>
       <Select
         onSelect={id => p.onSelectUser(parseInt(id))}
