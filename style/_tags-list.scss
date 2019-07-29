@@ -8,11 +8,14 @@
   margin: 3px 0;
   padding: 3px 12px;
   border: 1px solid #444;
-  color: #444;
+  color: #bbb;
   border-radius: 20px;
-  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.4);
-  transition: opacity 100ms, background-color 150ms, color 150ms,
-    border-color 150ms, box-shadow 250ms;
+  background: linear-gradient(to top, #333 0%, #555 100%);
+  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.4),
+    inset 0px 0px 5px 0px rgba(255, 255, 255, 0.1);
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
+  transition: opacity 100ms, color 150ms, border-color 150ms, box-shadow 250ms,
+    text-shadow 200ms;
   cursor: pointer;
 
   &:focus,
@@ -21,9 +24,10 @@
   }
 
   &.selected {
-    background-color: #c6e878;
+    background: #c6e878;
     border: 1px solid #164834;
     color: #164834;
+    box-shadow: 0px 0px 10px 0px #164834;
 
     &:hover {
       background-color: #c6e878;
@@ -33,13 +37,22 @@
   }
 
   &:hover {
-    background-color: #f2f2f2;
     border-color: #666;
-    color: #666;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+    color: #eee;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3),
+      inset 0px 0px 10px 0px rgba(255, 255, 255, 0.1);
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.4);
   }
 }
 
 .tag-block {
   margin-bottom: 20px;
+}
+
+.tags-display {
+  background-color: #222;
+
+  .title {
+    color: #ddd;
+  }
 }
