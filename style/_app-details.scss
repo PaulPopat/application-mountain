@@ -12,12 +12,13 @@
     border: none;
 
     .tags {
-      margin-bottom: 0;
+      margin-bottom: -0.5rem;
     }
 
     .card-header-title {
       color: #e0e0e0;
       padding: 10px 20px;
+      font-weight: 600;
     }
   }
 
@@ -35,7 +36,6 @@
   .tag {
     background-color: grey;
     color: #dedede;
-    margin-bottom: 0;
   }
 }
 
