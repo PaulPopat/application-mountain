@@ -13,42 +13,6 @@ import {
   DoNotCare
 } from "./type";
 
-export const IsSharedConfig = IsObject({
-  UserLocalConfigStore: IsObject({
-    Software: IsObject({
-      valve: IsObject({
-        Steam: IsObject({
-          SSAVersion: IsNumber,
-          DesktopShortcutCheck: IsNumber,
-          StartMenuShortcutCheck: IsNumber,
-          AutoLaunchGameListCheck: IsNumber,
-          SteamDefaultDialog: IsString,
-          Apps: IsDictionary(
-            IsObject({
-              tags: Optional(IsDictionary(IsString)),
-              LastPlayed: Optional(IsString),
-              CloudEnabled: Optional(IsNumber)
-            })
-          ),
-          PrivacyPolicyVersion: IsNumber,
-          SurveyDate: IsString,
-          SurveyDateVersion: IsNumber
-        })
-      })
-    }),
-    Web: IsDictionary(IsDiscriminated(IsString, IsNumber)),
-    TradeInfoHint: IsNumber,
-    controller_config: IsDictionary(
-      IsObject({
-        usetime: IsNumber,
-        selected: Optional(IsString)
-      })
-    )
-  })
-});
-
-export type SharedConfig = IsType<typeof IsSharedConfig>;
-
 export const IsGameInfo = IsDictionary(
   IsObject({
     success: IsBoolean,
@@ -182,17 +146,11 @@ export const IsGameInfo = IsDictionary(
 
 export type GameInfo = IsType<typeof IsGameInfo>;
 
-export const IsAppList = IsArray(IsObject({ appid: IsNumber, name: IsString }));
+export const IsAppList = IsArray(
+  IsObject({ appid: IsNumber, name: IsString, logo: IsString })
+);
 
 export type AppList = IsType<typeof IsAppList>;
-
-export const IsSteamLibrary = IsObject({
-  applist: IsObject({
-    apps: IsAppList
-  })
-});
-
-export type SteamLibrary = IsType<typeof IsSteamLibrary>;
 
 export const IsTagsList = IsArray(
   IsObject({
@@ -271,3 +229,28 @@ export const IsSizes = IsDictionary(
     y: IsNumber
   })
 );
+
+export const IsUserLibrary = IsObject({
+  gamesList: IsObject({
+    steamID64: IsArray(IsString),
+    steamID: IsArray(IsString),
+    games: IsArray(
+      IsObject({
+        game: IsArray(
+          IsObject({
+            appID: IsArray(IsString),
+            name: IsArray(IsString),
+            logo: IsArray(IsString),
+            storeLink: IsArray(IsString),
+            hoursLast2Weeks: Optional(IsArray(IsString)),
+            hoursOnRecord: Optional(IsArray(IsString)),
+            statsLink: Optional(IsArray(IsString)),
+            globalStatsLink: Optional(IsArray(IsString))
+          })
+        )
+      })
+    )
+  })
+});
+
+export type UserLibrary = IsType<typeof IsUserLibrary>;

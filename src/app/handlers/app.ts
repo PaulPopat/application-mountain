@@ -1,12 +1,12 @@
 import { handle } from "../coms-service";
 import { IsNumber } from "../../util/type";
 import { file } from "../fs";
-import { get_app_info, get_local_config } from "../providers/library-provider";
+import { get_app_info, get_user_library } from "../providers/library-provider";
 import { get_installed_apps } from "../providers/installation-provider";
 import { get_tags_on_app, get_tags } from "../providers/tags-provider";
 import { create_window } from "../window-service";
-import { get_current_user } from "../providers/prefered-user-provider";
 import { start_detached } from "../application-service";
+import { get_current_user } from "../providers/prefered-user-provider";
 
 handle("/app/start", async appid => {
   if (!IsNumber(appid)) {
@@ -26,21 +26,16 @@ handle("/app/info", async appid => {
     installed = installed || app === appid;
   }
 
-  const getLastPlayed = async () => {
-    const config = await get_local_config(await get_current_user());
-    const apps = config.UserLocalConfigStore.Software.valve.Steam.Apps;
-    for (const key in apps) {
-      if (!apps.hasOwnProperty(key)) {
-        continue;
-      }
-
-      const app = apps[key];
-      if (parseInt(key) === appid) {
-        return app.LastPlayed;
-      }
+  const getHoursPlayed = async () => {
+    const library = await get_user_library(await get_current_user(), false);
+    const game = library.gamesList.games[0].game.find(
+      g => parseInt(g.appID[0]) === appid
+    );
+    if (!game) {
+      return null;
     }
 
-    return null;
+    return game.hoursOnRecord && game.hoursOnRecord[0];
   };
 
   return {
@@ -48,7 +43,7 @@ handle("/app/info", async appid => {
     tags: await get_tags_on_app(appid),
     allTags: await get_tags(),
     installed: installed,
-    lastPlayed: await getLastPlayed()
+    hoursPlayed: await getHoursPlayed()
   };
 });
 

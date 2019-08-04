@@ -1,12 +1,12 @@
 import React, { SFC, Fragment } from "react";
 import { AppList } from "../util/types";
 import Scrollbars from "react-custom-scrollbars";
-import { thumbnail_url } from "../util/steam";
 import { Check } from "./widgets/icons";
 
 const LibraryItem: SFC<{
   appid: number;
   name: string;
+  logo: string;
   selected: boolean;
   onSelect: (appid: number) => void;
 }> = p => {
@@ -19,7 +19,7 @@ const LibraryItem: SFC<{
         <span className="game-thumbnail">
           <span className="image-container">
             <img
-              src={thumbnail_url(p.appid)}
+              src={p.logo}
               onError={e => (e.currentTarget.style.display = "none")}
             />
           </span>
@@ -51,6 +51,7 @@ export const LibraryViewer: SFC<{
               key={a.appid}
               appid={a.appid}
               name={a.name}
+              logo={a.logo}
               selected={p.selected.find(i => i === a.appid) != null}
               onSelect={p.onSelect}
             />

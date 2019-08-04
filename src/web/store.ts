@@ -13,8 +13,6 @@ export type State = {
   loading: boolean;
   renaming: boolean;
   search: string;
-  users: { username: string; userid: number }[];
-  user: number;
 };
 
 export const initial_state: Readonly<State> = {
@@ -26,9 +24,7 @@ export const initial_state: Readonly<State> = {
   selected: [],
   loading: true,
   renaming: false,
-  search: "",
-  users: [],
-  user: -1
+  search: ""
 };
 
 type SetStateArg = ((s: State) => State) | State;
@@ -63,16 +59,6 @@ export default function(getState: () => State, setState: SetState) {
       throw new Error("Invalid tags");
     }
 
-    const users = await query("/users");
-    if (!IsArray(IsObject({ username: IsString, userid: IsNumber }))(users)) {
-      throw new Error("Invalid users");
-    }
-
-    const user = await query("/users/user");
-    if (!IsNumber(user)) {
-      throw new Error("Invalid user");
-    }
-
     clearTimeout(timeout);
     return {
       library,
@@ -83,9 +69,7 @@ export default function(getState: () => State, setState: SetState) {
       selected: tagids,
       search: filter,
       loading: false,
-      renaming: false,
-      users,
-      user
+      renaming: false
     };
   }
 
@@ -211,13 +195,6 @@ export default function(getState: () => State, setState: SetState) {
     async submit_name(name: string) {
       const state = getState();
       await query("/tags/tag/rename", { id: state.selected[0], name });
-      setState({
-        ...(await refresh(state.selected, state.search))
-      });
-    },
-    async set_user(userid: number) {
-      const state = getState();
-      await query("/users/user", userid);
       setState({
         ...(await refresh(state.selected, state.search))
       });

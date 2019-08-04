@@ -1,11 +1,42 @@
-import { messagingService, MessageHandler } from "./server-messaging";
+import { BrowserWindow, ipcMain, Event } from "electron";
+import { warn } from "../util/logger";
 
-type MessagingService = ReturnType<typeof messagingService>;
+type MessageHandler = (
+  arg: unknown,
+  window: BrowserWindow,
+  name: string
+) => Promise<unknown>;
 
-const coms: MessagingService[] = [];
+function messagingService(window: BrowserWindow, name: string) {
+  return {
+    handle: (
+      message: string,
+      handler: (
+        arg: unknown,
+        window: BrowserWindow,
+        name: string
+      ) => Promise<unknown>
+    ) => {
+      ipcMain.on(message, async (e: Event, a: unknown) => {
+        if (e.sender.id !== window.webContents.id) {
+          return;
+        }
+
+        try {
+          window.webContents.send(message, await handler(a, window, name));
+        } catch (e) {
+          warn(JSON.stringify(e));
+        }
+      });
+    }
+  };
+}
+
+const coms: ReturnType<typeof messagingService>[] = [];
 const handlers: { [key: string]: MessageHandler } = {};
 
-export function add_coms(service: MessagingService) {
+export function add_coms(window: BrowserWindow, name: string) {
+  const service = messagingService(window, name);
   coms.push(service);
   for (const key in handlers) {
     if (!handlers.hasOwnProperty(key)) {

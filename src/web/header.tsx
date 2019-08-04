@@ -12,9 +12,6 @@ import { debounce } from "../util/debounce";
 import { CloseButton, Select } from "./widgets/input-field";
 
 export const Header: SFC<{
-  users: { username: string; userid: number }[];
-  userid: number;
-  onSelectUser: (userid: number) => void;
   onRefresh: () => void;
   canEditTag: boolean;
   onDeleteTag: () => void;
@@ -53,18 +50,6 @@ export const Header: SFC<{
           Import tags
         </Button>
       </Buttons>
-      <Select
-        onSelect={id => p.onSelectUser(parseInt(id))}
-        selected={p.userid.toString()}
-      >
-        {p.users.reduce(
-          (c, n) => {
-            c[n.userid.toString()] = n.username;
-            return c;
-          },
-          {} as { [key: string]: string }
-        )}
-      </Select>
       <Heading level="3">Steam Library</Heading>
 
       <div className="search-box">

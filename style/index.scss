@@ -181,6 +181,12 @@ html {
   .fade {
     font-size: 0;
   }
+
+  img {
+    width: 600px;
+    height: 340px;
+    object-fit: cover;
+  }
 }
 
 .shadow-scroll {

@@ -1,7 +1,6 @@
 import { BrowserWindow } from "electron";
 import environment from "../util/environment";
 import { add_coms } from "./coms-service";
-import { messagingService } from "./server-messaging";
 import { file } from "./fs";
 import { IsSizes } from "../util/types";
 
@@ -74,7 +73,7 @@ export async function create_window(
     windows = windows.filter(w => w === window);
   });
 
-  add_coms(messagingService(window, name));
+  add_coms(window, name);
   return window;
 }
 

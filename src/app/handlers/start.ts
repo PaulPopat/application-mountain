@@ -1,21 +1,16 @@
 import { handle } from "../coms-service";
-import { get_users, get_apps_list } from "../providers/library-provider";
+import { get_apps_list } from "../providers/library-provider";
 import {
   IsString,
   IsArray,
   IsObject,
   Optional,
-  IsBoolean,
-  IsNumber
+  IsBoolean
 } from "../../util/type";
 import { file, set_steam_app_path } from "../fs";
 import { shell } from "electron";
 import { get_tag } from "../providers/tags-provider";
 import { IsSizes } from "../../util/types";
-import {
-  get_current_user,
-  set_current_user
-} from "../providers/prefered-user-provider";
 import { store_url } from "../../util/steam";
 
 const sizes_file = file("data", "window-sizes.json");
@@ -66,20 +61,4 @@ handle("window/close", async (_, window, name) => {
 
 handle("window/minimise", async (_, window) => {
   window.minimize();
-});
-
-handle("/users", async _ => {
-  return await get_users();
-});
-
-handle("/users/user", async userid => {
-  if (!userid) {
-    return await get_current_user();
-  }
-
-  if (!IsNumber(userid)) {
-    throw new Error("Invalid user id");
-  }
-
-  await set_current_user(userid);
 });

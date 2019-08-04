@@ -11,15 +11,9 @@ import {
   Card
 } from "./widgets/atoms";
 import Scrollbars from "react-custom-scrollbars";
-import { IsObject, IsBoolean, IsNumber, Optional } from "../util/type";
+import { IsObject, IsBoolean, Optional, IsString } from "../util/type";
 import { CloseButton } from "./widgets/input-field";
 import { Carousel } from "./widgets/carousel";
-
-function get_date(seconds: number) {
-  const date = new Date(0);
-  date.setUTCSeconds(seconds);
-  return date;
-}
 
 export const AppDetails: SFC<{
   children?: null | never;
@@ -30,14 +24,14 @@ export const AppDetails: SFC<{
     tags: TagsList;
     allTags: TagsList;
     installed: boolean;
-    lastPlayed: number | null | undefined;
+    hoursPlayed: string | null | undefined;
     loading: boolean;
   }>({
     info: {},
     tags: [],
     allTags: [],
     installed: false,
-    lastPlayed: null,
+    hoursPlayed: null,
     loading: true
   });
 
@@ -51,7 +45,7 @@ export const AppDetails: SFC<{
         tags: IsTagsList,
         allTags: IsTagsList,
         installed: IsBoolean,
-        lastPlayed: Optional(IsNumber)
+        hoursPlayed: Optional(IsString)
       })(de)
     ) {
       throw new Error("Invalid app info from server");
@@ -149,12 +143,12 @@ export const AppDetails: SFC<{
                 >
                   {details.installed ? "Play Game" : "Install"}
                 </Button>
-                {details.lastPlayed && (
+                {details.hoursPlayed && (
                   <div className="last-played">
                     <Heading level="5" subtitle>
-                      Last Opened
+                      Hours on Record
                     </Heading>
-                    <p>{get_date(details.lastPlayed).toLocaleDateString()}</p>
+                    <p>{details.hoursPlayed}</p>
                   </div>
                 )}
               </div>
@@ -210,7 +204,9 @@ export const AppDetails: SFC<{
             </div>
           </Scrollbars>
         ) : (
-          <Heading level="5">Looks like this app has no details...</Heading>
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <Heading level="5">Looks like this app has no details...</Heading>
+          </div>
         )}
       </Loading>
     </div>

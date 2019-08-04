@@ -183,7 +183,7 @@ export function IsDictionary<T>(c: Checker<T>): Checker<{ [key: string]: T }> {
 
 export function Optional<T>(c: Checker<T>): Checker<T | null | undefined> {
   return (arg: any): arg is T | null | undefined => {
-    return c(arg, true) || typeof arg === "undefined" || arg === null;
+    return typeof arg === "undefined" || arg === null || c(arg, true);
   };
 }
 
