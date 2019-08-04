@@ -256,28 +256,23 @@ export const IsUserLibrary = IsObject({
 export type UserLibrary = IsType<typeof IsUserLibrary>;
 
 export const IsAppManifest = IsObject({
-  AppState: IsObject({
-    appid: IsNumber,
-    Universe: IsNumber,
-    name: IsString,
-    StateFlags: IsNumber,
-    installdir: IsString,
-    LastUpdated: IsNumber,
-    UpdateResult: IsNumber,
-    SizeOnDisk: IsNumber,
-    buildid: IsNumber,
-    LastOwner: IsNumber,
-    BytesToDownload: IsNumber,
-    BytesDownloaded: IsNumber,
-    AutoUpdateBehavior: IsNumber,
-    AllowOtherDownloadsWhileRunning: IsNumber,
-    ScheduledAutoUpdate: IsNumber,
-    InstalledDepots: DoNotCare,
-    MountedDepots: DoNotCare,
-    UserConfig: DoNotCare,
-    SharedDepots: DoNotCare,
-    StagedDepots: DoNotCare
-  })
+  AppState: IsUnion(
+    IsObject({
+      appid: IsNumber,
+      Universe: IsNumber,
+      name: IsString,
+      StateFlags: IsNumber,
+      installdir: IsString,
+      LastUpdated: IsNumber,
+      UpdateResult: IsNumber,
+      SizeOnDisk: IsNumber,
+      buildid: IsNumber,
+      LastOwner: IsNumber,
+      BytesToDownload: IsNumber,
+      BytesDownloaded: IsNumber
+    }),
+    IsDictionary(DoNotCare)
+  )
 });
 
 export type AppManifest = IsType<typeof IsAppManifest>;
