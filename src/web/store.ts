@@ -1,7 +1,6 @@
 import { AppList, TagsList, IsAppList, IsTagsList } from "../util/types";
 import { query, send } from "./web-messaging";
-import { IsArray, IsNumber, IsString, IsObject, Optional } from "../util/type";
-import { import_tags } from "../app/providers/tags-provider";
+import { IsArray, IsNumber, IsString } from "../util/type";
 
 export type State = {
   library: AppList;

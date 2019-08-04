@@ -265,3 +265,21 @@ export const Card: SFC<{
     )}
   </div>
 );
+
+export const ProgressBar: SFC<{
+  colour?: "primary" | "link" | "info" | "success" | "warning" | "danger";
+  size?: "small" | "medium" | "large";
+  value: number;
+}> = p => (
+  <progress
+    className={build_classes({
+      progress: true,
+      [`is-${p.colour}`]: p.colour != null,
+      [`is-${p.size}`]: p.size != null
+    })}
+    value={p.value}
+    max={1}
+  >
+    {p.children}
+  </progress>
+);

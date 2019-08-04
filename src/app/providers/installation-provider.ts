@@ -1,5 +1,6 @@
-import { file, directory_raw, directory } from "../fs";
+import { file, directory_raw, directory, is_file } from "../fs";
 import path from "path";
+import { IsAppManifest } from "../../util/types";
 
 const installDirectories: ReturnType<typeof directory_raw>[] = [];
 
@@ -45,4 +46,19 @@ export async function get_installed_apps() {
   }
 
   return result;
+}
+
+export async function get_install_progress(appid: number) {
+  for (const dir of await get_install_dirs()) {
+    for await (const f of dir.children()) {
+      if (is_file(f) && f.name === `appmanifest_${appid}.acf`) {
+        const data = await f.read_vdf("utf-8");
+        if (!IsAppManifest(data)) {
+          throw new Error("Invalid app manifest");
+        }
+
+        return data.AppState.BytesDownloaded / data.AppState.BytesToDownload;
+      }
+    }
+  }
 }

@@ -8,10 +8,17 @@ import {
   Field,
   Tags,
   Tag,
-  Card
+  Card,
+  ProgressBar
 } from "./widgets/atoms";
 import Scrollbars from "react-custom-scrollbars";
-import { IsObject, IsBoolean, Optional, IsString } from "../util/type";
+import {
+  IsObject,
+  IsBoolean,
+  Optional,
+  IsString,
+  IsNumber
+} from "../util/type";
 import { CloseButton } from "./widgets/input-field";
 import { Carousel } from "./widgets/carousel";
 
@@ -25,6 +32,7 @@ export const AppDetails: SFC<{
     allTags: TagsList;
     installed: boolean;
     hoursPlayed: string | null | undefined;
+    progress: number | null | undefined;
     loading: boolean;
   }>({
     info: {},
@@ -32,6 +40,7 @@ export const AppDetails: SFC<{
     allTags: [],
     installed: false,
     hoursPlayed: null,
+    progress: null,
     loading: true
   });
 
@@ -45,7 +54,8 @@ export const AppDetails: SFC<{
         tags: IsTagsList,
         allTags: IsTagsList,
         installed: IsBoolean,
-        hoursPlayed: Optional(IsString)
+        hoursPlayed: Optional(IsString),
+        progress: Optional(IsNumber)
       })(de)
     ) {
       throw new Error("Invalid app info from server");
@@ -56,6 +66,10 @@ export const AppDetails: SFC<{
 
   if (details.loading) {
     refresh();
+  } else if (!document.hidden) {
+    setTimeout(() => refresh(), 2000);
+  } else {
+    window.onfocus = () => setTimeout(() => refresh(), 2000);
   }
 
   const TagDetails = () => (
@@ -137,8 +151,14 @@ export const AppDetails: SFC<{
             <div className="content-container">
               <div className="install-and-last-played">
                 <Button
-                  onClick={() => send("/app/start", p.appid)}
+                  onClick={() => {
+                    send("/app/start", p.appid);
+                    refresh();
+                  }}
                   type="primary"
+                  disabled={
+                    (details.progress != null && details.progress < 1) || false
+                  }
                   rounded
                 >
                   {details.installed ? "Play Game" : "Install"}
@@ -152,6 +172,20 @@ export const AppDetails: SFC<{
                   </div>
                 )}
               </div>
+              {details.progress != null &&
+                details.progress < 1 &&
+                details.progress > 0 && (
+                  <div className="download-progress">
+                    <Field>
+                      <Heading level="6">Download Progress</Heading>
+                      <ProgressBar
+                        value={details.progress}
+                        colour="warning"
+                        size="small"
+                      />
+                    </Field>
+                  </div>
+                )}
               <Field>
                 <p
                   dangerouslySetInnerHTML={{

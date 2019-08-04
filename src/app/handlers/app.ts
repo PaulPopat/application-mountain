@@ -2,7 +2,10 @@ import { handle } from "../coms-service";
 import { IsNumber } from "../../util/type";
 import { file } from "../fs";
 import { get_app_info, get_user_library } from "../providers/library-provider";
-import { get_installed_apps } from "../providers/installation-provider";
+import {
+  get_installed_apps,
+  get_install_progress
+} from "../providers/installation-provider";
 import { get_tags_on_app, get_tags } from "../providers/tags-provider";
 import { create_window } from "../window-service";
 import { start_detached } from "../application-service";
@@ -43,7 +46,8 @@ handle("/app/info", async appid => {
     tags: await get_tags_on_app(appid),
     allTags: await get_tags(),
     installed: installed,
-    hoursPlayed: await getHoursPlayed()
+    hoursPlayed: await getHoursPlayed(),
+    progress: installed ? await get_install_progress(appid) : null
   };
 });
 
