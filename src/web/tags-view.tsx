@@ -63,18 +63,29 @@ export class TagsView extends Component<
             >
               All
             </div>
-            {this.props.tags.map(t => (
-              <div
-                onClick={() => this.props.onSelectTag(t.id)}
-                className={build_classes({
-                  "tag-item": true,
-                  selected: this.props.selected.find(i => i === t.id) != null
-                })}
-                key={t.id}
-              >
-                {t.name}
-              </div>
-            ))}
+            <div
+              onClick={() => this.props.onSelectTag("hidden")}
+              className={build_classes({
+                "tag-item": true,
+                selected: this.props.selected.find(i => i === "hidden") != null
+              })}
+            >
+              Hidden
+            </div>
+            {this.props.tags
+              .filter(t => t.id !== "hidden")
+              .map(t => (
+                <div
+                  onClick={() => this.props.onSelectTag(t.id)}
+                  className={build_classes({
+                    "tag-item": true,
+                    selected: this.props.selected.find(i => i === t.id) != null
+                  })}
+                  key={t.id}
+                >
+                  {t.name}
+                </div>
+              ))}
           </div>
           {this.state.adding && (
             <InputField

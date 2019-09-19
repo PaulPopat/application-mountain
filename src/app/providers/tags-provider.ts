@@ -18,6 +18,10 @@ export async function get_tags() {
       throw new Error("Invalid tags list");
     }
 
+    if (!result.find(r => r.id === "hidden")) {
+      result.push({ id: "hidden", name: "Hidden", apps: [] });
+    }
+
     return result;
   }
 

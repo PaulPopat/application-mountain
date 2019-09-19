@@ -39,7 +39,10 @@ export class Main extends Component<{ children?: null | never }, State> {
       <div className="app">
         <Header
           onRefresh={async () => await this.store.refresh(true)}
-          canEditTag={this.state.selected.length === 1}
+          canEditTag={
+            this.state.selected.length === 1 &&
+            this.state.selected[0] !== "hidden"
+          }
           onDeleteTag={this.store.delete_tag}
           onSearch={this.store.search}
           onEditTag={this.store.edit_current}

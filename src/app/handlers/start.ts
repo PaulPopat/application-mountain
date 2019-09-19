@@ -31,7 +31,12 @@ handle("/", async (options, window) => {
 
   for (const tagid of options.tags) {
     const tag = await get_tag(tagid);
-    result = result.filter(a => tag.apps.find(t => t === a.appid) != null);
+    result = result.filter(a => tag.apps.find(t => t === a.appid));
+  }
+
+  if (!options.tags.find(t => t === "hidden")) {
+    const tag = await get_tag("hidden");
+    result = result.filter(a => !tag.apps.find(t => t === a.appid));
   }
 
   return result.filter(r =>
