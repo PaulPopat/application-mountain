@@ -1,6 +1,6 @@
 .tags-container {
   user-select: none;
-  padding: 10px;
+  padding: 20px 10px;
 }
 
 .tag-item {
@@ -9,8 +9,8 @@
   padding: 3px 12px;
   border: 1px solid #444;
   color: #bbb;
-  border-radius: 20px;
-  background: linear-gradient(to top, #333 0%, #555 100%);
+  border-radius: 5px;
+  background: #333;
   box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.4),
     inset 0px 0px 5px 0px rgba(255, 255, 255, 0.1);
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);

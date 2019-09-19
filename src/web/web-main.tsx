@@ -64,17 +64,19 @@ export class Main extends Component<{ children?: null | never }, State> {
             <Fade show={this.state.editing != null} fill overlay>
               <div className="editing-overlay" />
             </Fade>
-            <Loading loading={this.state.loading}>
-              <LibraryViewer
-                library={this.state.library}
-                selected={
-                  this.state.editing != null
-                    ? this.get_tag(this.state.editing).apps
-                    : this.state.installed
-                }
-                onSelect={this.store.select_game}
-              />
-            </Loading>
+            <div className="library-container">
+              <Loading loading={this.state.loading}>
+                <LibraryViewer
+                  library={this.state.library}
+                  selected={
+                    this.state.editing != null
+                      ? this.get_tag(this.state.editing).apps
+                      : this.state.installed
+                  }
+                  onSelect={this.store.select_game}
+                />
+              </Loading>
+            </div>
 
             {this.state.editing && (
               <div className="done-button">

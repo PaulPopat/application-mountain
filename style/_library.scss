@@ -11,7 +11,9 @@
 }
 
 .library-container {
-  padding: 20px;
+  margin: 20px 0;
+  position: relative;
+  height: calc(100% - 40px);
 }
 
 .game-thumbnail-container {
@@ -22,6 +24,10 @@
   margin: 5px;
   overflow: visible;
   z-index: 0;
+
+  &:hover {
+    z-index: 10;
+  }
 
   .selected {
     position: absolute;
@@ -47,6 +53,7 @@
   background-color: #333;
   overflow: hidden;
   border-radius: 6px;
+  border: 1px solid #545454;
   box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 1);
 
   transition: width 250ms, height 250ms, top 250ms, left 250ms, box-shadow 250ms;
@@ -69,11 +76,10 @@
     height: 114px;
     top: -5px;
     left: -10px;
-    box-shadow: 0px 0px 100px 0px rgba(0, 0, 0, 1);
-    z-index: 10;
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 1);
 
     .overlay {
-      box-shadow: inset -3px -3px 39px 0px rgba(255, 255, 255, 0.4);
+      box-shadow: inset -3px -3px 10px 0px rgba(255, 255, 255, 0.4);
     }
 
     .image-container {

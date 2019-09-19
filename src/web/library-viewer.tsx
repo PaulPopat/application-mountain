@@ -44,7 +44,10 @@ export const LibraryViewer: SFC<{
 }> = p => {
   return (
     <Scrollbars style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-      <div className="library-container fill">
+      <div
+        className="fill"
+        style={{ marginLeft: "20px", width: "calc(100% - 20px)" }}
+      >
         {Array.from(
           p.library.map(a => (
             <LibraryItem
