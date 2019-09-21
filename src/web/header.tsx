@@ -50,7 +50,6 @@ export const Header: SFC<{
           Import tags
         </Button>
       </Buttons>
-      <Heading level="3">Steam Library</Heading>
 
       <div className="search-box">
         <input
