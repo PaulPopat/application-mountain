@@ -43,23 +43,28 @@ export const LibraryViewer: SFC<{
   children?: null | never;
 }> = p => {
   return (
-    <div
-      className="fill"
-      style={{ marginLeft: "20px", width: "calc(100% - 20px)" }}
-    >
-      <Scrollbars style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-        {Array.from(
-          p.library.map(a => (
-            <LibraryItem
-              key={a.appid}
-              appid={a.appid}
-              name={a.name}
-              logo={a.logo}
-              selected={p.selected.find(i => i === a.appid) != null}
-              onSelect={p.onSelect}
-            />
-          ))
-        )}
+    <div className="fill" style={{ width: "100%" }}>
+      <Scrollbars
+        style={{
+          width: "100%",
+          height: "100%",
+          overflow: "hidden"
+        }}
+      >
+        <div style={{ paddingLeft: "20px" }}>
+          {Array.from(
+            p.library.map(a => (
+              <LibraryItem
+                key={a.appid}
+                appid={a.appid}
+                name={a.name}
+                logo={a.logo}
+                selected={p.selected.find(i => i === a.appid) != null}
+                onSelect={p.onSelect}
+              />
+            ))
+          )}
+        </div>
       </Scrollbars>
     </div>
   );

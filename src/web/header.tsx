@@ -9,7 +9,7 @@ import {
 } from "./widgets/atoms";
 import { send, query } from "./web-messaging";
 import { debounce } from "../util/debounce";
-import { CloseButton, Select } from "./widgets/input-field";
+import { CloseButton } from "./widgets/input-field";
 
 export const Header: SFC<{
   onRefresh: () => void;
